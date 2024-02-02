@@ -41,12 +41,12 @@ jobs:
     - name: Build RPM Package
       run: |
         fpm -s dir -t rpm -n hello-world -v ${{ github.ref_name }} --architecture amd64 --prefix /usr/bin dist/hello-world_linux_amd64_v1//hello-world=/usr/bin/hello-world
-        fpm -s dir -t rpm -n hello-world -v ${{ github.ref_name }} --architecture arm64 --prefix /usr/bin dist/hello-world_linux_arm64_v1//hello-world=/usr/bin/hello-world
+        fpm -s dir -t rpm -n hello-world -v ${{ github.ref_name }} --architecture arm64 --prefix /usr/bin dist/hello-world_linux_arm64//hello-world=/usr/bin/hello-world
 
     - name: Build DEB Package
       run: |
         fpm -s dir -t deb -n hello-world -v ${{ github.ref_name }} --architecture amd64 --prefix /usr/bin dist/hello-world_linux_amd64_v1/hello-world=/usr/bin/hello-world
-        fpm -s dir -t deb -n hello-world -v ${{ github.ref_name }} --architecture arm64 --prefix /usr/bin dist/hello-world_linux_arm64_v1/hello-world=/usr/bin/hello-world
+        fpm -s dir -t deb -n hello-world -v ${{ github.ref_name }} --architecture arm64 --prefix /usr/bin dist/hello-world_linux_arm64/hello-world=/usr/bin/hello-world
 
     - name: debug
       run: |
