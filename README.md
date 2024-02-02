@@ -18,8 +18,8 @@ repository for some package managers, such as Homebrew Casks.
 
 ## Tools
 
-* goreleaser
-* fpm (RPM and DEB packages)
+* [GoReleaser](https://goreleaser.com/)
+* [fpm](https://github.com/jordansissel/fpm) (RPM and DEB packages)
 
 ## Build
 
