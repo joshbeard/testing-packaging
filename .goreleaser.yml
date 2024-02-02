@@ -1,33 +1,53 @@
-# This is an example Goreleaser configuration for your project
 project_name: hello-world
 before:
   hooks:
     - go mod tidy
 builds:
-- id: "hello-world"
-  goos:
-    - linux
-    - darwin
-    - windows
-  goarch:
-    - amd64
-    - arm64
-  main: .
-  binary: hello-world
+  - env:
+      # goreleaser does not work with CGO, it could also complicate
+      # usage by users in CI/CD systems like Terraform Cloud where
+      # they are unable to install libraries.
+      - CGO_ENABLED=0
+  - id: "hello-world"
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath
+    # ldflags:
+    #   - "-s -w -X main.version={{.Version}}"
+    goos:
+      - linux
+      - darwin
+      - windows
+      - freebsd
+    goarch:
+      - amd64
+      - arm64
+    main: .
+    binary: hello-world
 archives:
-- id: "archive"
-  builds:
-    - "hello-world"
-  format: tar.gz
-  format_overrides:
-    - goos: windows
-      format: zip
-  # files:
-  #   - none
+  - id: "archive"
+    builds:
+      - "hello-world"
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+        name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    # files:
+    #   - src: LICENSE
+    #   - src: README.md
 snapshot:
   name_template: "{{ .Tag }}-next"
 checksum:
   name_template: 'checksums.txt'
 signs:
   - artifacts: checksum
-
+    args:
+      - "--batch"
+      - "--local-user"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
