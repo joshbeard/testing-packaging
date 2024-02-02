@@ -55,7 +55,7 @@ jobs:
     - name: Upload Artifacts to S3
       uses: jakejarvis/s3-sync-action@master
       with:
-        args: --acl public-read --follow-symlinks --delete
+        args: --follow-symlinks --delete
       env:
         AWS_S3_BUCKET: jbeard-test-pkgs
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
