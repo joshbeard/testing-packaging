@@ -1,0 +1,20 @@
+pkgname=hello-world
+pkgver=0.0.1
+pkgrel=1
+pkgdesc="A simple hello world application"
+arch=('x86_64' 'arm64')
+url="https://github.com/joshbeard/testing-packaging"
+license=('MIT')
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd "$pkgname-$pkgver"
+  go build -o pkg/hello-world .
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  install -Dm755 pkg/hello-world "$pkgdir/usr/bin/hello-world"
+}
+

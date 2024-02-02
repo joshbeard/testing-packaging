@@ -1,0 +1,33 @@
+# This is an example Goreleaser configuration for your project
+project_name: hello-world
+before:
+  hooks:
+    - go mod tidy
+builds:
+- id: "hello-world"
+  goos:
+    - linux
+    - darwin
+    - windows
+  goarch:
+    - amd64
+    - arm64
+  main: .
+  binary: hello-world
+archives:
+- id: "archive"
+  builds:
+    - "hello-world"
+  format: tar.gz
+  format_overrides:
+    - goos: windows
+      format: zip
+  files:
+    - none
+snapshot:
+  name_template: "{{ .Tag }}-next"
+checksum:
+  name_template: 'checksums.txt'
+signs:
+  - artifacts: checksum
+

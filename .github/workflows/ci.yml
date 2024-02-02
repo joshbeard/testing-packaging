@@ -1,0 +1,43 @@
+name: Build and Package
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  build_release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '^1.21'
+
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v2
+      with:
+        version: latest
+        args: release --rm-dist
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install Ruby and FPM
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.3'
+
+    - name: Install FPM
+      run: gem install fpm
+
+    - name: Build RPM Package
+      run: |
+        fpm -s dir -t rpm -n hello-world -v ${{ github.ref_name }} --prefix /usr/local/bin dist/linux_amd64/hello-world=hello-world
+
+    - name: Build DEB Package
+      run: |
+        fpm -s dir -t deb -n hello-world -v ${{ github.ref_name }} --prefix /usr/local/bin dist/linux_amd64/hello-world=hello-world
+
+    - name: debug
+      run: |
+        ls -laR dist
