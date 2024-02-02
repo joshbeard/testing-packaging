@@ -6,15 +6,15 @@ repository for some package managers, such as Homebrew Casks.
 
 ## Goals
 
-* Produce artifacts (tar.gz, zip) of OS/architecture-specific packages
-* Build an RPM package
-* Build a DEB package
-* Provide an Arch Linux `PKGBUILD` and repository
-* Produce an RPM repository on S3
-* Provide a DEB repository on S3
-* Provide a Homebrew Cask repository
-
-* Upload the artifacts to S3
+* [ ] Produce artifacts (tar.gz, zip) of OS/architecture-specific packages
+* [ ] GPG signed
+* [ ] Build an RPM package
+* [ ] Build a DEB package
+* [ ] Provide an Arch Linux `PKGBUILD` and repository
+* [ ] Upload the artifacts to S3
+* [ ] Produce an RPM repository on S3
+* [ ] Provide a DEB repository on S3
+* [ ] Provide a Homebrew Cask repository
 
 ## Tools
 
