@@ -44,7 +44,7 @@ jobs:
         go-version: '^1.21'
     - run: |
         cd tools/s3-indexer
-        go run main.go -bucket jbeard-test-pkgs -prefix / -upload
+        go run s3-indexer.go -bucket jbeard-test-pkgs -prefix / -upload -url https://get.jbeard.dev -title get.jbeard.dev
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
