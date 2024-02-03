@@ -16,7 +16,6 @@ description: |
 vendor: "Josh Beard"
 homepage: "http://github.com/joshbeard/testing-packaging"
 license: "MIT"
-changelog: "changelog.yml"
 contents:
 - src: ./dist/hello-world_linux_${NFPM_PKG_ARCH}*/hello-world
   dst: /usr/bin
