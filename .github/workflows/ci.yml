@@ -28,11 +28,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GPG_FINGERPRINT: ${{ secrets.GPG_FINGERPRINT }}
-
-    - name: Install nfpm
-      run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
-    - name: Build Package
-      run: make nfpm
+    - run: |
+        make install-tools
+        make release
 
     - name: debug
       run: |
