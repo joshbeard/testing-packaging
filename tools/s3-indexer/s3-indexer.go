@@ -69,10 +69,7 @@ func main() {
 	var files []File
 	err := svc.ListObjectsV2Pages(req, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
 		for _, obj := range page.Contents {
-			key := *obj.Key
-			// Skip if not recursive and the object key is beyond the current prefix level
-			if !args.recursive && (args.prefix == "" && strings.Count(key, "/") > 0 ||
-				args.prefix != "" && strings.Count(key, "/") > strings.Count(args.prefix, "/")) {
+			if shouldSkip(*obj.Key) {
 				continue
 			}
 
@@ -113,6 +110,19 @@ func main() {
 	}
 
 	fmt.Println(wr.String())
+}
+
+func shouldSkip(key string) bool {
+	if !args.recursive && (args.prefix == "" && strings.Count(key, "/") > 0 ||
+		args.prefix != "" && strings.Count(key, "/") > strings.Count(args.prefix, "/")) {
+		return true
+	}
+
+	if strings.HasSuffix(key, "index.html") {
+		return true
+	}
+
+	return false
 }
 
 func uploadToS3(svc *s3.S3, bucket string, content *strings.Builder, dst string) error {
