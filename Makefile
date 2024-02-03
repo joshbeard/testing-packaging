@@ -43,7 +43,7 @@ goreleaser-release:
 
 .PHONY: nfpm
 nfpm:
-	@envsubst < .nfpm.yaml >| .nfpm.yaml.tmp
+	envsubst < .nfpm.yaml >| .nfpm.yaml.tmp
 	@NFPM_PKG_VERSION=$(VERSION)
 
 	@for ARCHITECTURE in amd64:x86_64 arm64:aarch64; do \
@@ -51,6 +51,7 @@ nfpm:
 		FILENAME_ARCH=$$(echo $$ARCHITECTURE | cut -d: -f2); \
 		FILENAME=$$FILENAME_ARCH/$(PACKAGE_NAME)-$(VERSION)-$$FILENAME_ARCH; \
 		mkdir -p $(STAGING_DIR)/{archlinux,deb,rpm}/$$FILENAME_ARCH; \
+		ls -laR $(STAGING_DIR); \
 		nfpm -f .nfpm.yaml.tmp package --packager rpm --target $(STAGING_DIR)/rpm/$$FILENAME.rpm; \
 		nfpm -f .nfpm.yaml.tmp package --packager archlinux --target $(STAGING_DIR)/archlinux/$$FILENAME.pkg.tar.zst; \
 		# deb uses arm64 instead of aarch64; fix it here \
