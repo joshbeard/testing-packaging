@@ -20,19 +20,19 @@ jobs:
       env:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
-    - name: Run GoReleaser
+    - name: Build Packages
       uses: goreleaser/goreleaser-action@v2
       with:
         version: latest
         args: release --clean
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GPG_FINGERPRINT: ${{ secrets.GPG_FINGERPRINT }}
     - run: |
         make install-tools
         make release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GPG_FINGERPRINT: ${{ secrets.GPG_FINGERPRINT }}
 
-    - name: debug
+    - name: Show staged files
       run: |
         ls -laR dist
 
