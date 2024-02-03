@@ -1,0 +1,31 @@
+name: "hello-world"
+#arch: "amd64"
+arch: ${NFPM_PKG_ARCH}
+platform: "linux"
+version: ${NFPM_PKG_VERSION}
+priority: "extra"
+# provides:
+# - bar
+#prerelease: beta1
+#release: 1
+section: vcs
+maintainer: "Josh Beard <josh@jbeard.dev>"
+description: |
+  FooBar is the great foo and bar software.
+    And this can be in multiple lines!
+vendor: "Josh Beard"
+homepage: "http://github.com/joshbeard/testing-packaging"
+license: "MIT"
+changelog: "changelog.yml"
+contents:
+- src: ./dist/hello-world_linux_${NFPM_PKG_ARCH}*/hello-world
+  dst: /usr/bin
+# overrides:
+#   rpm:
+#     scripts:
+#       preinstall: ./scripts/preinstall.sh
+#       postremove: ./scripts/postremove.sh
+#   deb:
+#     scripts:
+#       postinstall: ./scripts/postinstall.sh
+#       preremove: ./scripts/preremove.sh

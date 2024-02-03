@@ -10,9 +10,9 @@ repository for some package managers, such as Homebrew Casks.
     * [ ] Verify
 * [x] GPG signed
 * [x] Build an RPM package
-    * [ ] Verify
+    * [x] Verify
 * [x] Build a DEB package
-    * [ ] Verify
+    * [x] Verify
 * [ ] Provide an Arch Linux `PKGBUILD` and repository
     * [ ] Verify
 * [ ] Upload the artifacts to S3
@@ -26,7 +26,28 @@ repository for some package managers, such as Homebrew Casks.
 ## Tools
 
 * [GoReleaser](https://goreleaser.com/)
-* [fpm](https://github.com/jordansissel/fpm) (RPM and DEB packages)
+* [nFpm](https://nfpm.goreleaser.com/)
+* [s3-indexer](tools/s3-indexer)
+
+## Usage
+
+To do a "production" release:
+
+```shell
+make release
+```
+
+To build and stage all artifacts under `dist/`:
+
+```shell
+make stage
+```
+
+### Use a Container
+
+This can also be ran inside a container. Run `make shell` to launch a shell in
+a container, and `make install-tools` from there to install _goreleaser_ and
+_nfpm_.
 
 ## Build
 

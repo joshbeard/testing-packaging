@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{.Title}}</title>
+    <style>
+        h1 { font-family: Verdana, sans-serif; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            font-family: Consolas, monospace;
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{.Title}}</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Last Modified</th>
+        </tr>
+        {{range .Files}}
+        <tr>
+            <td><a href="{{.URL}}">{{.Name}}</a></td>
+            <td>{{.Size}}</td>
+            <td>{{.LastModified}}</td>
+        </tr>
+        {{end}}
+    </table>
+</body>
+</html>

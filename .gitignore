@@ -1,2 +1,11 @@
 .local
 dist/
+index.html
+pkg
+.build-cache/
+.nfpm.yaml.tmp
+changelog.yml
+*.rpm
+*.deb
+*.zip
+*.tar.gz
