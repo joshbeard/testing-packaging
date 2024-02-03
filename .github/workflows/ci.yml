@@ -21,20 +21,13 @@ jobs:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
     - name: Build Packages
-      uses: goreleaser/goreleaser-action@v2
-      with:
-        version: latest
-        args: release --clean
-    - run: |
+      run: |
         make install-tools
         make release
+        ls -laR dist
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GPG_FINGERPRINT: ${{ secrets.GPG_FINGERPRINT }}
-
-    - name: Show staged files
-      run: |
-        ls -laR dist
 
     - name: Upload Artifacts to S3
       uses: jakejarvis/s3-sync-action@master
