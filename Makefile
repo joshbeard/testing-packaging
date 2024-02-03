@@ -50,8 +50,9 @@ nfpm:
 		NFPM_PKG_ARCH=$$(echo $$ARCHITECTURE | cut -d: -f1); \
 		FILENAME_ARCH=$$(echo $$ARCHITECTURE | cut -d: -f2); \
 		FILENAME=$$FILENAME_ARCH/$(PACKAGE_NAME)-$(VERSION)-$$FILENAME_ARCH; \
-		mkdir -p $(STAGING_DIR)/{archlinux,deb,rpm}/$$FILENAME_ARCH; \
-		ls -laR $(STAGING_DIR); \
+		mkdir -p $(STAGING_DIR)/archlinux/$$FILENAME_ARCH; \
+		mkdir -p $(STAGING_DIR)/deb/$$FILENAME_ARCH; \
+		mkdir -p $(STAGING_DIR)/rpm/$$FILENAME_ARCH; \
 		nfpm -f .nfpm.yaml.tmp package --packager rpm --target $(STAGING_DIR)/rpm/$$FILENAME.rpm; \
 		nfpm -f .nfpm.yaml.tmp package --packager archlinux --target $(STAGING_DIR)/archlinux/$$FILENAME.pkg.tar.zst; \
 		# deb uses arm64 instead of aarch64; fix it here \
