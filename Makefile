@@ -69,10 +69,13 @@ clean:
 	rm -f .nfpm.yaml.tmp
 
 .PHONY: release
-release: goreleaser-release nfpm
+release: goreleaser-release stage nfpm
+
+.PHONY: snapshot
+snapshot: goreleaser-snapshot stage nfpm
 
 .PHONY: stage
-stage: goreleaser-snapshot nfpm
+stage:
 	echo "Staging release artifacts"
 	@mkdir -p $(STAGING_DIR)/pkg/$(VERSION)
 	@mv dist/*.zip dist/*.tar.gz $(STAGING_DIR)/pkg/$(VERSION)/
