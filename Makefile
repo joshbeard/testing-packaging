@@ -29,7 +29,7 @@ shell:
 		-w /go/src/github.com/$(PACKAGE_NAME) golang:1.21 bash
 
 .PHONY: install-tools
-install-tools-go:
+install-tools:
 	go install github.com/goreleaser/goreleaser@$(GORELEASER_VERSION)
 	go install github.com/goreleaser/nfpm/v2/cmd/nfpm@$(NFPM_VERSION)
 
