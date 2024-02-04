@@ -97,12 +97,13 @@ repo-rpm:
 	createrepo_c --update $(STAGING_DIR)/rpm/x86_64
 	createrepo_c --update $(STAGING_DIR)/rpm/aarch64
 
-.PHONY: createrepo-archlinux
-createrepo-archlinux:
+.PHONY: repo-archlinux
+repo-archlinux:
 	repo-add --new --remove $(STAGING_DIR)/archlinux/x86_64/hello-world.db.tar.gz $(STAGING_DIR)/archlinux/x86_64/*.pkg.tar.zst
 	repo-add --new --remove $(STAGING_DIR)/archlinux/aarch64/hello-world.db.tar.gz $(STAGING_DIR)/archlinux/aarch64/*.pkg.tar.zst
 
-.PHONY: createrepo-deb
-createrepo-deb:
-	dpkg-scanpackages $(STAGING_DIR)/deb/amd64 /dev/null | gzip -9c > $(STAGING_DIR)/deb/amd64/Packages.gz
+.PHONY: repo-deb
+repo-deb:
+	#dpkg-scanpackages --arch amd64 $(STAGING_DIR)/deb/x86_64 /dev/null | gzip -9c > $(STAGING_DIR)/deb/x86_64/Packages.gz
+	dpkg-scanpackages $(STAGING_DIR)/deb/x86_64 /dev/null | gzip -9c > $(STAGING_DIR)/deb/x86_64/Packages.gz
 	dpkg-scanpackages $(STAGING_DIR)/deb/arm64 /dev/null | gzip -9c > $(STAGING_DIR)/deb/arm64/Packages.gz
