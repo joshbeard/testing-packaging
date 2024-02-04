@@ -32,14 +32,10 @@ archives:
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
-        format: binary
+        format: zip
     files: []
     #   - src: LICENSE
     #   - src: README.md
-  - id: "zip"
-    format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-    files: []
 snapshot:
   name_template: "{{ .Tag }}-next"
 checksum:
@@ -54,17 +50,8 @@ signs:
       - "${signature}"
       - "--detach-sign"
       - "${artifact}"
-# .goreleaser.yaml
 aurs:
-  -
-    # The package name.
-    #
-    # Note that since this integration does not create a PKGBUILD to build from
-    # source, per Arch's guidelines.
-    # That said, GoReleaser will enforce a `-bin` suffix if its not present.
-    #
-    # Default: ProjectName with a -bin suffix.
-    name: hello-world-bin
+  - name: hello-world-bin
 
     # Artifact IDs to filter for.
     # Empty means all IDs (no filter).
@@ -72,43 +59,18 @@ aurs:
     #  - foo
     #  - bar
 
-    # Your app's homepage.
     homepage: "https://get.jbeard.dev/"
-
-    # Your app's description.
-    #
-    # Templates: allowed
     description: "Says hello world"
 
     # The maintainers of the package.
     maintainers:
       - 'Josh Beard <josh@jbeard.dev>'
 
-    # The contributors of the package.
     #contributors:
     #  - 'Foo Zaz <foo at zaz dot com>'
 
     # SPDX identifier of your app's license.
     license: "MIT"
-
-    # The SSH private key that should be used to commit to the Git repository.
-    # This can either be a path or the key contents.
-    #
-    # IMPORTANT: the key must not be password-protected.
-    #
-    #private_key: '{{ .Env.AUR_KEY }}'
-
-    # The AUR Git URL for this package.
-    # Publish is skipped if empty.
-    #git_url: 'ssh://aur@aur.archlinux.org/mypackage-bin.git'
-
-    # Setting this will prevent goreleaser to actually try to commit the updated
-    # formula - instead, the formula file will be stored on the dist folder only,
-    # leaving the responsibility of publishing it to the user.
-    #
-    # If set to auto, the release will not be uploaded to the AUR repo
-    # in case there is an indicator for prerelease in the tag e.g. v1.0.0-rc1.
-    skip_upload: true
 
     # Custom package instructions.
     # which is not always correct.
@@ -165,6 +127,26 @@ aurs:
     # Templates: allowed
     #url_template: "https://get.jbeard.dev/archlinux/{{ .Tag }}/{{ .ArtifactName }}"
     url_template: "https://get.jbeard.dev/pkg/{{ .ArtifactName }}"
+
+    # The SSH private key that should be used to commit to the Git repository.
+    # This can either be a path or the key contents.
+    #
+    # IMPORTANT: the key must not be password-protected.
+    #
+    #private_key: '{{ .Env.AUR_KEY }}'
+
+    # The AUR Git URL for this package.
+    # Publish is skipped if empty.
+    #git_url: 'ssh://aur@aur.archlinux.org/mypackage-bin.git'
+
+    # Setting this will prevent goreleaser to actually try to commit the updated
+    # formula - instead, the formula file will be stored on the dist folder only,
+    # leaving the responsibility of publishing it to the user.
+    #
+    # If set to auto, the release will not be uploaded to the AUR repo
+    # in case there is an indicator for prerelease in the tag e.g. v1.0.0-rc1.
+    skip_upload: true
+
 
     # Directory in which the files will be created inside the repository.
     # Only useful if you're creating your own AUR with multiple packages in a

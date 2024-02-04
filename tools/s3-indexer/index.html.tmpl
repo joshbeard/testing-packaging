@@ -3,20 +3,65 @@
 <head>
     <title>{{.Title}}</title>
     <style>
+    *, body {
+        padding: 0;
+        margin: 0;
+    }
+    a { text-decoration: none; }
+    a:link { color: #0000EE; }
+    a:visited { color: #551A8B; }
+    a:hover { color: #FF0000; text-decoration: underline; }
+
+    body { font-family: Arial, sans-serif; }
+    h1 {
+        padding: 8px;
+        font-family: Verdana, sans-serif;
+        color: #222;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+        font-family: Consolas, monospace;
+        text-align: left;
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+    }
+    tr:hover { background-color: #f5f5f5; }
+
+    #footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 0.8em;
+        padding: 8px;
+        background-color: #e9e9e9;
+        border-top: 1px solid #ddd;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        body { background-color: #1f1f1f; color: #eee; }
+        h1 { color: #eee; }
         a { text-decoration: none; }
-        a:link { color: #0000FF; }
-        a:visited { color: #800080; }
-        a:hover { color: #FF0000; text-decoration: underline; }
-        h1 { font-family: Verdana, sans-serif; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td {
-            font-family: Consolas, monospace;
-            text-align: left;
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-        }
-        tr:hover { background-color: #f5f5f5; }
+        a:link { color: #68ce93; }
+        a:hover { color: #e8c26f; }
+        a:visited { color: #d06fe8; }
+        th, td { border-color: #333; }
+        tr:hover { background-color: #333; }
+        #footer { background-color: #333; border-top: 1px solid #555; }
+    }
+
+    @media (prefers-color-scheme: light) {
+        h1 { color: #222; }
+        body { background-color: #ffffff; color: #111; }
+        a { text-decoration: none; }
+        a:linkx { color: #1b4067; }
+        a:hover { color: #792953; }
+        a:visited { color: #62265e; }
+        th, td { border-color: #ddd; }
+        tr:hover { background-color: #e1e1e1; }
+    }
     </style>
+
 </head>
 <body>
     <h1>{{.Title}}</h1>
@@ -26,6 +71,13 @@
             <th>Size</th>
             <th>Last Modified</th>
         </tr>
+        {{range .Dirs}}
+        <tr>
+            <td class="filename"><a href="{{.URL}}">{{.Name}}</a></td>
+            <td class="size">-</td>
+            <td class="date">{{.LastModified}}</td>
+        </tr>
+        {{end}}
         {{range .Files}}
         <tr>
             <td class="filename"><a href="{{.URL}}">{{.Name}}</a></td>
@@ -34,5 +86,8 @@
         </tr>
         {{end}}
     </table>
+    <div id="footer">
+        <a href="https://jbeard.dev">jbeard.dev</a>
+    </div>
 </body>
 </html>

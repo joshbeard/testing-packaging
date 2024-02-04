@@ -29,6 +29,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GPG_FINGERPRINT: ${{ secrets.GPG_FINGERPRINT }}
 
+    - name: Install createrepo
+      run: sudo apt-get update && sudo apt-get install -y createrepo-c
+    - name: Create RPM Repository
+      run: make repo-rpm
+
     - name: Upload Artifacts to S3
       uses: jakejarvis/s3-sync-action@master
       env:

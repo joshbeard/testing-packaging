@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -38,6 +37,7 @@ type File struct {
 type Data struct {
 	Title string
 	Files []File
+	Dirs  []File
 }
 
 func main() {
@@ -54,9 +54,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	if args.prefix == "/" {
-		args.prefix = ""
-	}
+	// if args.prefix == "/" {
+	// 	args.prefix = ""
+	// }
+
+	args.prefix = strings.Trim(args.prefix, "/")
 
 	sess := session.Must(session.NewSession())
 	svc := s3.New(sess)
@@ -66,6 +68,7 @@ func main() {
 		Prefix: aws.String(args.prefix),
 	}
 
+	var dirs []File
 	var files []File
 	err := svc.ListObjectsV2Pages(req, func(page *s3.ListObjectsV2Output, lastPage bool) bool {
 		for _, obj := range page.Contents {
@@ -73,10 +76,22 @@ func main() {
 				continue
 			}
 
+			// Trim the prefix from the key.
+			trimmed := strings.TrimPrefix(*obj.Key, args.prefix)
+			if strings.Contains(trimmed, "/") {
+				dir := filepath.Dir(trimmed)
+				if !containsFile(dirs, dir+"/") {
+					dirs = append(dirs, File{
+						Name: dir + "/",
+						URL:  args.url + "/" + args.prefix + dir,
+					})
+				}
+			}
+
 			files = append(files, File{
 				Name:         filepath.Base(*obj.Key),
 				Size:         humanizeBytes(*obj.Size),
-				LastModified: obj.LastModified.Format(time.RFC822),
+				LastModified: obj.LastModified.Format("2006-01-02 15:04 UTC"),
 				URL:          args.url + "/" + *obj.Key,
 			})
 		}
@@ -94,6 +109,7 @@ func main() {
 	data := Data{
 		Title: args.title,
 		Files: files,
+		Dirs:  dirs,
 	}
 
 	wr := new(strings.Builder)
@@ -103,18 +119,46 @@ func main() {
 
 	if args.upload {
 		fmt.Println("Uploading index.html to S3...")
-		if err := uploadToS3(svc, args.bucket, wr, "index.html"); err != nil {
+		if err := uploadToS3(svc, args.bucket, wr, args.prefix+"/index.html"); err != nil {
 			panic(err)
 		}
 		return
 	}
 
-	fmt.Println(wr.String())
+	// fmt.Println(wr.String())
+	fmt.Println("Directories:")
+	for _, d := range dirs {
+		fmt.Printf("  %s\n", d.Name)
+	}
+
+	fmt.Println("Files:")
+	for _, f := range files {
+		fmt.Printf("  %s\n", f.Name)
+	}
+
+}
+
+func containsFile(arr []File, s string) bool {
+	for _, a := range arr {
+		if a.Name == s {
+			return true
+		}
+	}
+	return false
 }
 
 func shouldSkip(key string) bool {
-	if !args.recursive && (args.prefix == "" && strings.Count(key, "/") > 0 ||
-		args.prefix != "" && strings.Count(key, "/") > strings.Count(args.prefix, "/")) {
+	// keySlashes := strings.Count(key, "/")
+	// prefixSlashes := strings.Count(args.prefix, "/")
+	//
+	// fmt.Printf("key: %s; keySlashes %d; prefixSlashes: %d\n", key, keySlashes, prefixSlashes)
+	// if !args.recursive && (args.prefix == "" && keySlashes > 1) {
+	// 	// args.prefix != "" && keySlashes > prefixSlashes+1) {
+	// 	return true
+	// }
+	trimmed := strings.TrimPrefix(key, args.prefix+"/")
+	if strings.Contains(trimmed, "/") {
+		fmt.Printf("skipping: %s [prefix %s]\n", key, args.prefix)
 		return true
 	}
 
@@ -122,6 +166,7 @@ func shouldSkip(key string) bool {
 		return true
 	}
 
+	// fmt.Printf("key: %s; prefix: %s\n", key, args.prefix)
 	return false
 }
 

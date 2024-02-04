@@ -6,22 +6,45 @@ repository for some package managers, such as Homebrew Casks.
 
 ## Goals
 
+### First
+
 * [x] Produce artifacts (tar.gz, zip) of OS/architecture-specific packages
-    * [ ] Verify
+    * [ ] Validation
 * [x] GPG signed
 * [x] Build an RPM package
-    * [x] Verify
+    * [x] Validation
 * [x] Build a DEB package
-    * [x] Verify
-* [ ] Provide an Arch Linux `PKGBUILD` and repository
-    * [ ] Verify
-* [ ] Upload the artifacts to S3
+    * [x] Validation
+* [x] Provide an Arch Linux `PKGBUILD`
+    * [ ] Validation
+* [x] Upload the artifacts to S3
+    * [ ] Validation
+
+### Second
+
 * [ ] Produce an RPM repository on S3
     * [ ] Verify
 * [ ] Provide a DEB repository on S3
     * [ ] Verify
 * [ ] Provide a Homebrew Cask repository
     * [ ] Verify
+* [ ] Arch AUR
+    * [ ] Verify
+
+### Third
+
+* [ ] Directory indexes
+* [ ] Serve install script for curl/wget by default for root request
+
+### Future
+
+* [ ] Submission to Arch community repo
+* [ ] Submission to Homebrew main repo
+* [ ] FreeBSD port and package
+
+### Other Ideas
+
+* [ ] Lambda@Edge function for serving directory listings?
 
 ## Tools
 
