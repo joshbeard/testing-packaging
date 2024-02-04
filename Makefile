@@ -43,23 +43,31 @@ goreleaser-release:
 
 .PHONY: nfpm
 nfpm:
-	envsubst < .nfpm.yaml >| .nfpm.yaml.tmp
-	@NFPM_PKG_VERSION=$(VERSION)
-
 	@for ARCHITECTURE in amd64:x86_64 arm64:aarch64; do \
-		NFPM_PKG_ARCH=$$(echo $$ARCHITECTURE | cut -d: -f1); \
+		export NFPM_PKG_VERSION=$(VERSION); \
+		NFPM_CFG_FILE=".nfpm.yaml" \
+		export NFPM_PKG_ARCH=$$(echo $$ARCHITECTURE | cut -d: -f1); \
+		# The source directory appends a "_v1" to the architecture for arm64 \
+		if [ "$$NFPM_PKG_ARCH" = "amd64" ]; then \
+			NFPM_PKG_SRC_DIR=amd64_v1; \
+		else \
+			NFPM_PKG_SRC_DIR=$$NFPM_PKG_ARCH; \
+		fi; \
+		export NFPM_PKG_SRC=dist/$(BINARY_NAME)_linux_$$NFPM_PKG_SRC_DIR/$(BINARY_NAME); \
 		FILENAME_ARCH=$$(echo $$ARCHITECTURE | cut -d: -f2); \
 		FILENAME=$$FILENAME_ARCH/$(PACKAGE_NAME)-$(VERSION)-$$FILENAME_ARCH; \
+		#envsubst < .nfpm.yaml >| .nfpm.yaml.tmp; \
 		mkdir -p $(STAGING_DIR)/archlinux/$$FILENAME_ARCH; \
-		mkdir -p $(STAGING_DIR)/deb/$$FILENAME_ARCH; \
 		mkdir -p $(STAGING_DIR)/rpm/$$FILENAME_ARCH; \
-		nfpm -f .nfpm.yaml.tmp package --packager rpm --target $(STAGING_DIR)/rpm/$$FILENAME.rpm; \
-		nfpm -f .nfpm.yaml.tmp package --packager archlinux --target $(STAGING_DIR)/archlinux/$$FILENAME.pkg.tar.zst; \
-		# deb uses arm64 instead of aarch64; fix it here \
-		if [ "$$FILENAME_ARCH" = "aarch64" ]; then \
+		nfpm -f $$NFPM_CFG_FILE package --packager rpm --target $(STAGING_DIR)/rpm/$$FILENAME.rpm; \
+		nfpm -f $$NFPM_CFG_FILE package --packager archlinux --target $(STAGING_DIR)/archlinux/$$FILENAME.pkg.tar.zst; \
+		if [ "$$NFPM_PKG_ARCH" = "arm64" ]; then \
 			FILENAME_ARCH=arm64; \
+			FILENAME=$$FILENAME_ARCH/$(PACKAGE_NAME)-$(VERSION)-$$FILENAME_ARCH; \
 		fi; \
-		nfpm -f .nfpm.yaml.tmp package --packager deb --target $(STAGING_DIR)/deb/$$FILENAME.deb; \
+		mkdir -p $(STAGING_DIR)/deb/$$FILENAME_ARCH; \
+		nfpm -f $$NFPM_CFG_FILE package --packager deb --target $(STAGING_DIR)/deb/$$FILENAME.deb; \
+		# nfpm -f $(NFPM_CFG_FILE) package --packager deb --target $(STAGING_DIR)/deb/$$FILENAME.deb; \
 	done
 
 .PHONY: all

@@ -1,8 +1,8 @@
 name: "hello-world"
 #arch: "amd64"
-arch: ${NFPM_PKG_ARCH}
+arch: "${NFPM_PKG_ARCH}"
 platform: "linux"
-version: ${NFPM_PKG_VERSION}
+version: "${NFPM_PKG_VERSION}"
 priority: "extra"
 # provides:
 # - bar
@@ -17,8 +17,9 @@ vendor: "Josh Beard"
 homepage: "http://github.com/joshbeard/testing-packaging"
 license: "MIT"
 contents:
-- src: ./dist/hello-world_linux_${NFPM_PKG_ARCH}*/hello-world
-  dst: /usr/bin
+- src: "${NFPM_PKG_SRC}"
+  dst: /usr/bin/hello-world
+  expand: true
 # overrides:
 #   rpm:
 #     scripts:
