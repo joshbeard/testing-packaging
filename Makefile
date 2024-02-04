@@ -104,6 +104,8 @@ repo-archlinux:
 
 .PHONY: repo-deb
 repo-deb:
-	#dpkg-scanpackages --arch amd64 $(STAGING_DIR)/deb/x86_64 /dev/null | gzip -9c > $(STAGING_DIR)/deb/x86_64/Packages.gz
 	dpkg-scanpackages $(STAGING_DIR)/deb/x86_64 /dev/null | gzip -9c > $(STAGING_DIR)/deb/x86_64/Packages.gz
 	dpkg-scanpackages $(STAGING_DIR)/deb/arm64 /dev/null | gzip -9c > $(STAGING_DIR)/deb/arm64/Packages.gz
+	./tools/generate-deb-release.sh $(STAGING_DIR)/deb/x86_64 > $(STAGING_DIR)/deb/x86_64/Release
+	./tools/generate-deb-release.sh $(STAGING_DIR)/deb/arm64 > $(STAGING_DIR)/deb/arm64/Release
+
