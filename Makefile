@@ -105,8 +105,8 @@ repo-archlinux:
 repo-deb:
 	mkdir -p $(STAGING_DIR)/deb/dists/stable/main/binary-amd64
 	mkdir -p $(STAGING_DIR)/deb/dists/stable/main/binary-arm64
-	dpkg-scanpackages --arch arm64 $(STAGING_DIR)/deb/pool/main > $(STAGING_DIR)/deb/dists/stable/main/binary-arm64/Packages
-	dpkg-scanpackages --arch amd64 $(STAGING_DIR)/deb/pool/main > $(STAGING_DIR)/deb/dists/stable/main/binary-amd64/Packages
+	(cd $(STAGING_DIR)/deb/pool/main && dpkg-scanpackages --arch arm64 .) > $(STAGING_DIR)/deb/dists/stable/main/binary-arm64/Packages
+	(cd $(STAGING_DIR)/deb/pool/main && dpkg-scanpackages --arch amd64 .) > $(STAGING_DIR)/deb/dists/stable/main/binary-amd64/Packages
 	cat $(STAGING_DIR)/deb/dists/stable/main/binary-arm64/Packages | gzip -9c > $(STAGING_DIR)/deb/dists/stable/main/binary-arm64/Packages.gz
 	cat $(STAGING_DIR)/deb/dists/stable/main/binary-amd64/Packages | gzip -9c > $(STAGING_DIR)/deb/dists/stable/main/binary-amd64/Packages.gz
 	./tools/generate-deb-release.sh $(STAGING_DIR)/deb/pool/main > $(STAGING_DIR)/deb/dists/stable/Release
