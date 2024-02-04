@@ -65,6 +65,7 @@ nfpm:
 		# Debian packages use the original architecture name and a different directory structure \
 		FILENAME_ARCH=$$NFPM_PKG_ARCH; \
 		FILENAME=$(PACKAGE_NAME)_$(VERSION)-$(RELEASE_NUM)_$$FILENAME_ARCH; \
+		mkdir -p $(STAGING_DIR)/deb/pool/main; \
 		nfpm -f $$NFPM_CFG_FILE package --packager deb --target $(STAGING_DIR)/deb/pool/main/$$FILENAME.deb; \
 	done
 

@@ -45,6 +45,7 @@ repository for some package managers, such as Homebrew Casks.
 * [ ] Tests
     * Local web service serving `dist/stage/`
     * Test in Docker container
+* [ ] Backups/Replication
 
 ### Future
 

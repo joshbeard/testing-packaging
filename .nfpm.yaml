@@ -1,13 +1,10 @@
 name: "hello-world"
-#arch: "amd64"
 arch: "${NFPM_PKG_ARCH}"
 platform: "linux"
 version: "${NFPM_PKG_VERSION}"
 priority: "extra"
-# provides:
-# - bar
 #prerelease: beta1
-#release: 1
+release: "${RELEASE_NUM}"
 section: vcs
 maintainer: "Josh Beard <josh@jbeard.dev>"
 description: |
@@ -20,12 +17,3 @@ contents:
 - src: "${NFPM_PKG_SRC}"
   dst: /usr/bin/hello-world
   expand: true
-# overrides:
-#   rpm:
-#     scripts:
-#       preinstall: ./scripts/preinstall.sh
-#       postremove: ./scripts/postremove.sh
-#   deb:
-#     scripts:
-#       postinstall: ./scripts/postinstall.sh
-#       preremove: ./scripts/preremove.sh
