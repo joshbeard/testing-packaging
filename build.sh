@@ -1,4 +1,5 @@
 #!/bin/sh
+set -a
 export PACKAGE="hello-world"
 export BINARY="hello-world"
 
@@ -46,6 +47,7 @@ stage() {
 }
 
 clean() {
+    echo "=> Cleaning up"
     rm -rf dist/*
 }
 
@@ -166,7 +168,15 @@ if [ $# -lt 1 ]; then
     exit 0
 fi
 
-$1 $@
+# Check for a function with the same name as the first argument
+if [ "$(type -t $1)" = "function" ]; then
+    $1 $@
+else
+    echo "Unknown command: $1"
+    exit 1
+fi
+
+#$1 $@
 
 # if [ "$(type -t $1)" = "function" ]; then
 #     $1

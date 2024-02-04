@@ -1,10 +1,10 @@
-name: "hello-world"
-arch: "${NFPM_PKG_ARCH}"
+name: "${PACKAGE}"
+arch: "${PKG_ARCH}"
 platform: "linux"
-version: "${NFPM_PKG_VERSION}"
+version: "${VERSION}"
 priority: "extra"
 #prerelease: beta1
-release: "${RELEASE_NUM}"
+release: "${RELEASE}"
 section: vcs
 maintainer: "Josh Beard <josh@jbeard.dev>"
 description: |
@@ -14,6 +14,6 @@ vendor: "Josh Beard"
 homepage: "http://github.com/joshbeard/testing-packaging"
 license: "MIT"
 contents:
-- src: "${NFPM_PKG_SRC}"
+- src: "${PKG_SRC}"
   dst: /usr/bin/hello-world
   expand: true
