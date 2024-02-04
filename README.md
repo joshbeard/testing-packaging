@@ -40,6 +40,11 @@ repository for some package managers, such as Homebrew Casks.
 
 * [ ] Directory indexes
 * [ ] Serve install script for curl/wget by default for root request
+* [ ] Changelogs
+* [ ] Release pipeline/workflow
+* [ ] Tests
+    * Local web service serving `dist/stage/`
+    * Test in Docker container
 
 ### Future
 

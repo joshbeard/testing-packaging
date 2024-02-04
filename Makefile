@@ -65,7 +65,6 @@ nfpm:
 		# Debian packages use the original architecture name and a different directory structure \
 		FILENAME_ARCH=$$NFPM_PKG_ARCH; \
 		FILENAME=$(PACKAGE_NAME)_$(VERSION)-$(RELEASE_NUM)_$$FILENAME_ARCH; \
-		mkdir -p $(STAGING_DIR)/deb/pool/main/$$FILENAME_ARCH; \
 		nfpm -f $$NFPM_CFG_FILE package --packager deb --target $(STAGING_DIR)/deb/pool/main/$$FILENAME.deb; \
 	done
 
@@ -105,7 +104,9 @@ repo-archlinux:
 repo-deb:
 	mkdir -p $(STAGING_DIR)/deb/dists/stable/main/binary-amd64
 	mkdir -p $(STAGING_DIR)/deb/dists/stable/main/binary-arm64
-	dpkg-scanpackages --arch amd64 $(STAGING_DIR)/deb/pool/main /dev/null | gzip -9c > $(STAGING_DIR)/deb/dists/stable/main/binary-amd64/Packages.gz
-	dpkg-scanpackages --arch arm64 $(STAGING_DIR)/deb/pool/main /dev/null | gzip -9c > $(STAGING_DIR)/deb/dists/stable/main/binary-arm64/Packages.gz
+	dpkg-scanpackages --arch arm64 $(STAGING_DIR)/deb/pool/main > $(STAGING_DIR)/deb/dists/stable/main/binary-arm64/Packages
+	dpkg-scanpackages --arch amd64 $(STAGING_DIR)/deb/pool/main > $(STAGING_DIR)/deb/dists/stable/main/binary-amd64/Packages
+	cat $(STAGING_DIR)/deb/dists/stable/main/binary-arm64/Packages | gzip -9c > $(STAGING_DIR)/deb/dists/stable/main/binary-arm64/Packages.gz
+	cat $(STAGING_DIR)/deb/dists/stable/main/binary-amd64/Packages | gzip -9c > $(STAGING_DIR)/deb/dists/stable/main/binary-amd64/Packages.gz
 	./tools/generate-deb-release.sh $(STAGING_DIR)/deb/pool/main > $(STAGING_DIR)/deb/dists/stable/Release
 
