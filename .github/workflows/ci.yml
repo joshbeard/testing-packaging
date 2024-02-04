@@ -22,7 +22,7 @@ jobs:
 
     - name: Build Packages
       run: |
-        ./build.sh install-tools
+        ./build.sh install_tools
         ./build.sh release
         ls -laR dist
       env:
