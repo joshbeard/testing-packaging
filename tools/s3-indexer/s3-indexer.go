@@ -302,6 +302,10 @@ func setConfig() {
 		config.Debug = cfg.Debug
 	}
 
+	if cfg.Upload {
+		config.Upload = cfg.Upload
+	}
+
 	cfg = config
 }
 
