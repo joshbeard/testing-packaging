@@ -22,8 +22,8 @@ jobs:
 
     - name: Build Packages
       run: |
-        make install-tools
-        make release
+        ./build.sh install-tools
+        ./build.sh release
         ls -laR dist
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -32,9 +32,9 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y createrepo-c dpkg-dev
     - name: Create RPM Repository
-      run: make repo-rpm
+      run: ./build.sh repo rpm
     - name: Create DEB Repository
-      run: make repo-deb
+      run: ./build.sh repo deb
 
     - name: Upload Artifacts to S3
       uses: jakejarvis/s3-sync-action@master
