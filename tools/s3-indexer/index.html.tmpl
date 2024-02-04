@@ -71,18 +71,37 @@
             <th>Size</th>
             <th>Last Modified</th>
         </tr>
-        {{range .Dirs}}
+        {{ if .HasParent }}
         <tr>
-            <td class="filename"><a href="{{.URL}}">{{.Name}}</a></td>
-            <td class="size">-</td>
-            <td class="date">{{.LastModified}}</td>
+            <td class="filename"><a href="../index.html">🔼 Go Up</a></td>
+            <td></td>
+            <td></td>
         </tr>
         {{end}}
-        {{range .Files}}
+        {{range .Items}}
         <tr>
-            <td class="filename"><a href="{{.URL}}">{{.Name}}</a></td>
-            <td class="size">{{.Size}}</td>
-            <td class="date">{{.LastModified}}</td>
+            <td class="filename">
+                {{if .IsDir}}
+                📁
+                {{else}}
+                📄
+                {{end}}
+                <a href="{{.URL}}">{{.Name}}</a>
+            </td>
+            <td class="size">
+                {{if not .IsDir}}
+                {{.Size}}
+                {{else}}
+                -
+                {{end}}
+            </td>
+            <td class="date">
+                {{if not .IsDir}}
+                {{.LastModified}}
+                {{else}}
+                -
+                {{end}}
+            </td>
         </tr>
         {{end}}
     </table>

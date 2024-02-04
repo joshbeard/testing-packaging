@@ -114,7 +114,7 @@ yum install hello-world
 ### Install the DEB
 
 ```plain
-deb [trusted=yes] https://get.jbeard.dev/deb/x86_64/ stable main
+deb [trusted=yes] https://get.jbeard.dev/deb stable main
 ```
 
 ## Repository Structure and Naming Conventions
