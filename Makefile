@@ -86,8 +86,8 @@ stage:
 
 .PHONY: repo-rpm
 repo-rpm:
-	createrepo_c --update $(STAGING_DIR)/rpm/amd64
-	createrepo_c --update $(STAGING_DIR)/rpm/arm64
+	createrepo_c --update $(STAGING_DIR)/rpm/x86_64
+	createrepo_c --update $(STAGING_DIR)/rpm/aaarch64
 
 .PHONY: createrepo-archlinux
 createrepo-archlinux:
