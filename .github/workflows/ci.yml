@@ -24,15 +24,16 @@ jobs:
       run: |
         ./build.sh install_tools
         ./build.sh release
-        ls -laR dist
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GPG_FINGERPRINT: ${{ secrets.GPG_FINGERPRINT }}
 
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y createrepo-c dpkg-dev
+
     - name: Create RPM Repository
       run: ./build.sh repo rpm
+
     - name: Create DEB Repository
       run: ./build.sh repo deb
 
@@ -45,11 +46,13 @@ jobs:
         AWS_REGION: 'us-east-1'
         SOURCE_DIR: 'dist/staging'
 
-    - name: Generate s3 indexes
+    - name: Set up Go
       uses: actions/setup-go@v5
       with:
         go-version: '^1.21'
-    - run: |
+
+    - name: Generate s3 indexes
+      run: |
         cd tools/s3-indexer
         go run s3-indexer.go -bucket jbeard-test-pkgs -prefix / -upload -url https://get.jbeard.dev -title get.jbeard.dev
       env:

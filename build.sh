@@ -8,6 +8,7 @@ export RELEASE=$(git rev-list --count HEAD)
 
 DIST_DIR=dist
 STAGING_DIR=dist/staging
+S3_BUCKET=jbeard-test-pkgs
 
 GORELEASER_VERSION=v1.23.0
 NFPM_VERSION=v2.35.3
@@ -159,6 +160,10 @@ _repo_deb() {
 
 	./tools/generate-deb-release.sh "${STAGING_DIR}/deb/pool/main" > \
         "${STAGING_DIR}/deb/dists/stable/Release"
+}
+
+purge_s3() {
+    aws s3 rm s3://$S3_BUCKET/ --recursive
 }
 
 # Execute the function that matches the first argument
