@@ -133,3 +133,7 @@ deb [trusted=yes] https://get.jbeard.dev/deb/x86_64/ stable main
 ```plain
 <package-name>_<version>-<release-number>_<architecture>
 ```
+
+## Observations
+
+* Debian packages are a pain

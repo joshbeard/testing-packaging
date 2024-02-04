@@ -143,12 +143,12 @@ _repo_deb() {
 	mkdir -p "$AMD64_DIR" "$ARM64_DIR"
 
     echo "-> Creating amd64 package file"
-	(cd "${STAGING_DIR}/deb/pool/main" && ls && dpkg-scanpackages \
-        --arch amd64 "$PWD" /dev/null) >| "$AMD64_DIR/Packages"
+	(cd "${STAGING_DIR}/deb" && dpkg-scanpackages \
+        --arch amd64 pool/) >| "$AMD64_DIR/Packages"
 
     echo "-> Creating arm64 package file"
-	(cd "${STAGING_DIR}/deb/pool/main" && dpkg-scanpackages \
-        --arch arm64 . /dev/null) >| "$ARM64_DIR/Packages"
+	(cd "${STAGING_DIR}/deb" && dpkg-scanpackages \
+        --arch arm64 pool/) >| "$ARM64_DIR/Packages"
 
     echo "-> Creating amd64 package index files"
 	cat "${STAGING_DIR}/deb/dists/stable/main/binary-amd64/Packages" | \
@@ -163,6 +163,15 @@ _repo_deb() {
 }
 
 purge_s3() {
+    # Confirm
+    echo "This will remove all files from the S3 bucket $S3_BUCKET"
+    echo -n "Are you sure you want to continue? (yes/no): "
+    read confirm
+    if [ "$confirm" != "yes" ]; then
+        echo "Aborting"
+        exit 1
+    fi
+
     aws s3 rm s3://$S3_BUCKET/ --recursive
 }
 
