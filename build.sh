@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -a
 export PACKAGE="hello-world"
 export BINARY="hello-world"
@@ -175,12 +175,3 @@ else
     echo "Unknown command: $1"
     exit 1
 fi
-
-#$1 $@
-
-# if [ "$(type -t $1)" = "function" ]; then
-#     $1
-# else
-#     echo "Unknown command: $1"
-#     exit 1
-# fi
