@@ -20,6 +20,7 @@ PACKAGE_NAME := hello-world
 
 # Get the current Git tag for the version
 VERSION := $(shell git describe --tags --abbrev=0)
+RELEASE_NUM := $(shell git rev-list --count HEAD)
 
 STAGING_DIR := "dist/stage"
 
@@ -45,8 +46,8 @@ goreleaser-release:
 nfpm:
 	@for ARCHITECTURE in amd64:x86_64 arm64:aarch64; do \
 		export NFPM_PKG_VERSION=$(VERSION); \
-		NFPM_CFG_FILE=".nfpm.yaml" \
 		export NFPM_PKG_ARCH=$$(echo $$ARCHITECTURE | cut -d: -f1); \
+		NFPM_CFG_FILE=".nfpm.yaml" \
 		# The source directory appends a "_v1" to the architecture for arm64 \
 		if [ "$$NFPM_PKG_ARCH" = "amd64" ]; then \
 			NFPM_PKG_SRC_DIR=amd64_v1; \
@@ -61,13 +62,11 @@ nfpm:
 		mkdir -p $(STAGING_DIR)/rpm/$$FILENAME_ARCH; \
 		nfpm -f $$NFPM_CFG_FILE package --packager rpm --target $(STAGING_DIR)/rpm/$$FILENAME.rpm; \
 		nfpm -f $$NFPM_CFG_FILE package --packager archlinux --target $(STAGING_DIR)/archlinux/$$FILENAME.pkg.tar.zst; \
-		if [ "$$NFPM_PKG_ARCH" = "arm64" ]; then \
-			FILENAME_ARCH=arm64; \
-			FILENAME=$$FILENAME_ARCH/$(PACKAGE_NAME)-$(VERSION)-$$FILENAME_ARCH; \
-		fi; \
-		mkdir -p $(STAGING_DIR)/deb/$$FILENAME_ARCH; \
-		nfpm -f $$NFPM_CFG_FILE package --packager deb --target $(STAGING_DIR)/deb/$$FILENAME.deb; \
-		# nfpm -f $(NFPM_CFG_FILE) package --packager deb --target $(STAGING_DIR)/deb/$$FILENAME.deb; \
+		# Debian packages use the original architecture name and a different directory structure \
+		FILENAME_ARCH=$$NFPM_PKG_ARCH; \
+		FILENAME=$(PACKAGE_NAME)_$(VERSION)-$(RELEASE_NUM)_$$FILENAME_ARCH; \
+		mkdir -p $(STAGING_DIR)/deb/pool/main/$$FILENAME_ARCH; \
+		nfpm -f $$NFPM_CFG_FILE package --packager deb --target $(STAGING_DIR)/deb/pool/main/$$FILENAME.deb; \
 	done
 
 .PHONY: all
@@ -104,8 +103,9 @@ repo-archlinux:
 
 .PHONY: repo-deb
 repo-deb:
-	dpkg-scanpackages $(STAGING_DIR)/deb/x86_64 /dev/null | gzip -9c > $(STAGING_DIR)/deb/x86_64/Packages.gz
-	dpkg-scanpackages $(STAGING_DIR)/deb/arm64 /dev/null | gzip -9c > $(STAGING_DIR)/deb/arm64/Packages.gz
-	./tools/generate-deb-release.sh $(STAGING_DIR)/deb/x86_64 > $(STAGING_DIR)/deb/x86_64/Release
-	./tools/generate-deb-release.sh $(STAGING_DIR)/deb/arm64 > $(STAGING_DIR)/deb/arm64/Release
+	mkdir -p $(STAGING_DIR)/deb/dists/stable/main/binary-amd64
+	mkdir -p $(STAGING_DIR)/deb/dists/stable/main/binary-arm64
+	dpkg-scanpackages --arch amd64 $(STAGING_DIR)/deb/pool/main /dev/null | gzip -9c > $(STAGING_DIR)/deb/dists/stable/main/binary-amd64/Packages.gz
+	dpkg-scanpackages --arch arm64 $(STAGING_DIR)/deb/pool/main /dev/null | gzip -9c > $(STAGING_DIR)/deb/dists/stable/main/binary-arm64/Packages.gz
+	./tools/generate-deb-release.sh $(STAGING_DIR)/deb/pool/main > $(STAGING_DIR)/deb/dists/stable/Release
 

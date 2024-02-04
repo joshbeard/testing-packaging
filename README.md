@@ -22,8 +22,8 @@ repository for some package managers, such as Homebrew Casks.
 
 ### Second
 
-* [ ] Produce an RPM repository on S3
-    * [ ] Verify
+* [x] Produce an RPM repository on S3
+    * [x] Verify
 * [ ] Provide a DEB repository on S3
     * [ ] Verify
 * [ ] Provide a Homebrew Cask repository
@@ -33,6 +33,11 @@ repository for some package managers, such as Homebrew Casks.
 
 ### Third
 
+* [ ] RPM repository GPG
+* [ ] DEB repository GPG
+
+### Fourth
+
 * [ ] Directory indexes
 * [ ] Serve install script for curl/wget by default for root request
 
@@ -40,11 +45,12 @@ repository for some package managers, such as Homebrew Casks.
 
 * [ ] Submission to Arch community repo
 * [ ] Submission to Homebrew main repo
-* [ ] FreeBSD port and package
 
 ### Other Ideas
 
 * [ ] Lambda@Edge function for serving directory listings?
+* [ ] FreeBSD port and package
+* [ ] OpenBSD port and package
 
 ## Tools
 
@@ -76,4 +82,48 @@ _nfpm_.
 
 ```shell
 go build -o pkg/hello-world .
+```
+
+## Installing the Packages
+
+This sections describes how to install the packages that this repository
+produces.
+
+### Install the RPM
+
+Add this to `/etc/yum.repos.d/jbeard.repo`:
+
+```plain
+[helloworld]
+name=Hello World
+baseurl=https://get.jbeard.dev/rpm/$basearch
+enabled=1
+gpgcheck=0
+```
+
+```shell
+yum install hello-world
+```
+
+### Install the DEB
+
+```plain
+deb [trusted=yes] https://get.jbeard.dev/deb/x86_64/ stable main
+```
+
+## Repository Structure and Naming Conventions
+
+## Resources
+
+### Building Debian Packages
+
+* <https://wiki.debian.org/DebianRepository/Setup>
+* <https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/>
+
+### Package Name Conventions
+
+#### Debian Package Names
+
+```plain
+<package-name>_<version>-<release-number>_<architecture>
 ```
