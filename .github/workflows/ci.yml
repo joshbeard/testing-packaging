@@ -46,17 +46,12 @@ jobs:
         AWS_REGION: 'us-east-1'
         SOURCE_DIR: 'dist/staging'
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
+    - name: S3 Index Generator
+      uses: joshbeard/s3-index-generator@v1
       with:
-        go-version: '^1.21'
-
-    - name: Generate s3 indexes
-      run: |
-        cd tools/s3-indexer
-        go run s3-indexer.go -config ../../.s3-indexer.yml -upload
+        config: .s3-indexer.yml
+        upload: "true"
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-east-1'
-
