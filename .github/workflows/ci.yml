@@ -47,7 +47,7 @@ jobs:
         SOURCE_DIR: 'dist/staging'
 
     - name: S3 Index Generator
-      uses: joshbeard/s3-index-generator@v1
+      uses: joshbeard/s3-index-generator@main
       with:
         config: .s3-indexer.yml
         upload: "true"
