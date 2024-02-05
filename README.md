@@ -94,16 +94,21 @@ software in popular package repositories and formats.
 
 ## Usage
 
-To do a "production" release:
+The [`build.sh`](build.sh) script drives this thing. I started with a
+`Makefile`, but shell was more readable and cleaner.
+
+To build all the packages, generate repositories, and stage things under
+`dist/staging/`, run the following:
 
 ```shell
-make release
+./build.sh snapshot
 ```
 
-To build and stage all artifacts under `dist/`:
+To do a "production" release (the [`CI job`](.github/workflows/ci.yml) runs
+this).
 
 ```shell
-make stage
+./build.sh release
 ```
 
 ### Use a Container
@@ -156,12 +161,34 @@ deb [trusted=yes] https://get.jbeard.dev/deb stable main
 
 ### Package Name Conventions
 
-#### Debian Package Names
+#### Archive Package Names
+
+```plain
+<package-name>_<version>_<os>_<architecture>
+```
+
+```plain
+hello-world_1.2.3_linux_amd64.tar.gz
+hello-world_1.2.3_linux_arm64.tar.gz
+hello-world_1.2.3_windows_amd64.zip
+```
+
+#### RPM and DEB Package Names
 
 ```plain
 <package-name>_<version>-<release-number>_<architecture>
 ```
 
+For example:
+
+```plain
+hello-world_1.2.3-1_amd64   # DEB
+hello-world_1.2.3-1_arm64   # DEB
+
+hello-world_1.2.3-1_x86_64  # RPM
+hello-world_1.2.3-1_aarch64 # RPM
+```
+
 ## Observations
 
-* Debian packages are a pain
+* Debian repos are a pain

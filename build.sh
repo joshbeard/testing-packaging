@@ -158,7 +158,7 @@ _repo_deb() {
 	cat "${STAGING_DIR}/deb/dists/stable/main/binary-arm64/Packages" | \
         gzip -9c > "${ARM64_DIR}/Packages.gz"
 
-	./tools/generate-deb-release.sh "${STAGING_DIR}/deb/pool/main" > \
+	./tools/generate-deb-release.sh "${STAGING_DIR}/deb/dists/stable" > \
         "${STAGING_DIR}/deb/dists/stable/Release"
 }
 
