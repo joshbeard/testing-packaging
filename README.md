@@ -4,12 +4,39 @@ This repository is to test out building an artifact and
 packaging it in a variety of formats, while also providing a
 repository for some package managers, such as Homebrew Casks.
 
+This project is developed around shipping a compiled Go binary and uses
+[GoReleaser]() and [NFPM]()
+to produce the artifacts. The functionality beyond the package creation should
+be fairly generic. I intend to create a separate project with the same goals
+but building artifacts more generically (without GoReleaser) instead.
+
+All of this is an effort to better understand the packaging and distribution of
+software in popular package repositories and formats.
+
 ## Goals
+
+* Monorepo
+    * I'm not opposed to separating things and think it might be necessary for
+      certain things, or at least simpler and easier to deal with. However, I'd
+      like to "prove out" a monolithic repository for managing the distribution
+      alongside the source code.
+* Re-usable
+    * The methods and tools should be as re-usable as possible, given their
+      intentional design choices. Minimal adaptation should be required to port
+      this project's resources to another project.
+* Avoid CI-specifics
+    * This project should be able to produce the packages and repository
+      structure locally as much as possible.
+* Follow standards
+    * Each package should follow the standards and conventions for that
+      particular package and repository type. E.g. naming conventions,
+      repository structure.
 
 ### First
 
 * [x] Produce artifacts (tar.gz, zip) of OS/architecture-specific packages
-    * [ ] Validation
+    * [x] Validation
+    * [ ] TODO: contains README unexpectedly (maybe bundle main readme and license)
 * [x] GPG signed
 * [x] Build an RPM package
     * [x] Validation
@@ -18,7 +45,7 @@ repository for some package managers, such as Homebrew Casks.
 * [x] Provide an Arch Linux `PKGBUILD`
     * [ ] Validation
 * [x] Upload the artifacts to S3
-    * [ ] Validation
+    * [x] Validation
 
 ### Second
 
@@ -39,6 +66,7 @@ repository for some package managers, such as Homebrew Casks.
 ### Fourth
 
 * [ ] Directory indexes
+  * TODO: s3/cloudfront default indexes (index.html)
 * [ ] Serve install script for curl/wget by default for root request
 * [ ] Changelogs
 * [ ] Release pipeline/workflow

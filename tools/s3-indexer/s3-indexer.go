@@ -204,10 +204,12 @@ func generateOrUploadIndex(svc *s3.S3, bucket, prefix string, data Data, tmpl *t
 			panic(err)
 		}
 
+		wrStr := minifyHTML(wr.String())
+
 		if cfg.Debug {
 			fmt.Printf("Uploading index.html to %s/%sindex.html\n", bucket, prefix)
 		}
-		if err := uploadToS3(svc, bucket, wr.String(), prefix+"index.html"); err != nil {
+		if err := uploadToS3(svc, bucket, wrStr, prefix+"index.html"); err != nil {
 			panic(err)
 		}
 	} else {
@@ -333,4 +335,12 @@ func readConfig() Config {
 	}
 
 	return config
+}
+
+func minifyHTML(str string) string {
+	str = strings.ReplaceAll(str, "\n", "")
+	str = strings.ReplaceAll(str, "\t", "")
+	str = strings.ReplaceAll(str, "  ", "")
+	str = strings.ReplaceAll(str, "> <", "><")
+	return str
 }
