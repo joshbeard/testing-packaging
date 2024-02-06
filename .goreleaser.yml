@@ -50,6 +50,13 @@ signs:
       - "${signature}"
       - "--detach-sign"
       - "${artifact}"
+dockers:
+  - id: hello-world
+    ids:
+      - hello-world
+    image_templates:
+    - joshbeard/hello-world:latest
+    - joshbeard/hello-world:{{ .Tag }}
 aurs:
   - name: hello-world-bin
 

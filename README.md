@@ -57,6 +57,9 @@ software in popular package repositories and formats.
     * [ ] Verify
 * [ ] Arch AUR
     * [ ] Verify
+* [ ] Docker image
+    * [ ] Publish to Docker Hub
+    * [ ] Publish to ghcr.io
 
 ### Third
 
@@ -65,8 +68,8 @@ software in popular package repositories and formats.
 
 ### Fourth
 
-* [ ] Directory indexes
-  * TODO: s3/cloudfront default indexes (index.html)
+* [x] Directory indexes
+  * [ ] TODO: s3/cloudfront default indexes (index.html)
 * [ ] Serve install script for curl/wget by default for root request
 * [ ] Changelogs
 * [ ] Release pipeline/workflow
@@ -90,7 +93,7 @@ software in popular package repositories and formats.
 
 * [GoReleaser](https://goreleaser.com/)
 * [nFpm](https://nfpm.goreleaser.com/)
-* [s3-indexer](tools/s3-indexer)
+* [s3-index-generator](https://github.com/joshbeard/s3-index-generator)
 
 ## Usage
 
