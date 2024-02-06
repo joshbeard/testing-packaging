@@ -87,7 +87,7 @@ _nfpm() {
             --target "${STAGING_DIR}/rpm/${FILENAME_ARCH}/${FILENAME}.rpm"
 
 		nfpm -f "$NFPM_CFG_FILE" package --packager archlinux \
-            --target "${STAGING_DIR}/archlinux/${FILENAME_ARCH}/${FILENAME}.rpm"
+            --target "${STAGING_DIR}/archlinux/${FILENAME_ARCH}/${FILENAME}.pkg.tar.zst"
 
         # Debian packages use the original architecture name and a different
         # directory structure
@@ -111,6 +111,12 @@ repo() {
         rpm)
             _repo_rpm
             ;;
+        aur-custom-docker)
+            _repo_aur_custom_docker
+            ;;
+        aur-custom)
+            _repo_aur_custom
+            ;;
         archlinux)
             _repo_archlinux
             ;;
@@ -127,14 +133,6 @@ repo() {
 _repo_rpm() {
 	createrepo_c --update "${STAGING_DIR}/rpm/x86_64"
 	createrepo_c --update "${STAGING_DIR}/rpm/aarch64"
-}
-
-_repo_archlinux() {
-	repo-add --new --remove "${STAGING_DIR}/archlinux/x86_64/${PACKAGE}.db.tar.gz" \
-        "${STAGING_DIR}"/archlinux/x86_64/*.pkg.tar.zst
-
-	repo-add --new --remove "${STAGING_DIR}/archlinux/aarch64/${PACKAGE}.db.tar.gz" \
-        "${STAGING_DIR}"/archlinux/aarch64/*.pkg.tar.zst
 }
 
 _repo_deb() {
@@ -161,6 +159,29 @@ _repo_deb() {
 	./tools/generate-deb-release.sh "${STAGING_DIR}/deb/dists/stable" > \
         "${STAGING_DIR}/deb/dists/stable/Release"
 }
+
+# Runs 'repo-add' inside an 'archlinux' container to create a repository for
+# the Arch Linux packages
+_repo_aur_custom_docker() {
+    docker run --rm -it -v ${STAGING_DIR}/archlinux:/repo \
+        -w /repo archlinux:latest \
+        /bin/bash -c "repo-add --new --remove ./x86_64/${PACKAGE}.db.tar.gz \
+        ./x86_64/*.pkg.tar.zst"
+
+    docker run --rm -it -v ${STAGING_DIR}/archlinux:/repo \
+        -w /repo archlinux:latest \
+        /bin/bash -c "repo-add --new --remove ./aarch64/${PACKAGE}.db.tar.gz \
+        ./aarch64/*.pkg.tar.zst"
+}
+
+_repo_aur_custom() {
+	repo-add --new --remove "${STAGING_DIR}/archlinux/x86_64/${PACKAGE}.db.tar.gz" \
+        "${STAGING_DIR}"/archlinux/x86_64/*.pkg.tar.zst
+
+	repo-add --new --remove "${STAGING_DIR}/archlinux/aarch64/${PACKAGE}.db.tar.gz" \
+        "${STAGING_DIR}"/archlinux/aarch64/*.pkg.tar.zst
+}
+
 
 purge_s3() {
     # Confirm

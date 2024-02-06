@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
+      contents: write
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-go@v2
@@ -46,6 +47,9 @@ jobs:
 
     - name: Create DEB Repository
       run: ./build.sh repo deb
+
+    - name: Create custom AUR
+      run: ./build.sh repo aur-custom-docker
 
     - name: Upload Artifacts to S3
       uses: jakejarvis/s3-sync-action@master
