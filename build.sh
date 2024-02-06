@@ -52,7 +52,7 @@ clean() {
     rm -rf dist/*
 }
 
-docker() {
+docker_shell() {
 	docker run --rm -it -v ${PWD}:/go/src/github.com/${PACKAGE} \
 		-w /go/src/github.com/${PACKAGE} golang:1.21 bash
 }
@@ -163,15 +163,15 @@ _repo_deb() {
 # Runs 'repo-add' inside an 'archlinux' container to create a repository for
 # the Arch Linux packages
 _repo_aur_custom_docker() {
-    docker run --rm -it -v ${STAGING_DIR}/archlinux:/repo \
-        -w /repo archlinux:latest \
-        /bin/bash -c "repo-add --new --remove ./x86_64/${PACKAGE}.db.tar.gz \
-        ./x86_64/*.pkg.tar.zst"
+    echo "=> Creating x86_64 AUR custom repository with Docker"
+    docker run --rm -v ${PWD}/${STAGING_DIR}/archlinux/x86_64:/repo \
+        -w /repo -it archlinux:latest \
+        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz *.pkg.tar.zst"
 
-    docker run --rm -it -v ${STAGING_DIR}/archlinux:/repo \
-        -w /repo archlinux:latest \
-        /bin/bash -c "repo-add --new --remove ./aarch64/${PACKAGE}.db.tar.gz \
-        ./aarch64/*.pkg.tar.zst"
+    echo "=> Creating aarch64 AUR custom repository with Docker"
+    docker run --rm -v ${PWD}/${STAGING_DIR}/archlinux/aarch64:/repo \
+        -w /repo -it archlinux:latest \
+        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz *.pkg.tar.zst"
 }
 
 _repo_aur_custom() {

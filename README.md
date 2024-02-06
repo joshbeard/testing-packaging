@@ -59,7 +59,7 @@ software in popular package repositories and formats.
     * [ ] Verify
 * [x] Docker image
     * [x] Publish to Docker Hub
-    * [ ] Publish to ghcr.io
+    * [x] Publish to ghcr.io
 
 ### Third
 
