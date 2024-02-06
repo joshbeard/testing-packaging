@@ -165,12 +165,12 @@ _repo_deb() {
 _repo_aur_custom_docker() {
     echo "=> Creating x86_64 AUR custom repository with Docker"
     docker run --rm -v ${PWD}/${STAGING_DIR}/archlinux/x86_64:/repo \
-        -w /repo -it archlinux:latest \
+        -w /repo -i archlinux:latest \
         /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz *.pkg.tar.zst"
 
     echo "=> Creating aarch64 AUR custom repository with Docker"
     docker run --rm -v ${PWD}/${STAGING_DIR}/archlinux/aarch64:/repo \
-        -w /repo -it archlinux:latest \
+        -w /repo -i archlinux:latest \
         /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz *.pkg.tar.zst"
 }
 
