@@ -57,8 +57,8 @@ software in popular package repositories and formats.
     * [ ] Verify
 * [ ] Arch AUR
     * [ ] Verify
-* [ ] Docker image
-    * [ ] Publish to Docker Hub
+* [x] Docker image
+    * [x] Publish to Docker Hub
     * [ ] Publish to ghcr.io
 
 ### Third

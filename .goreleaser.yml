@@ -57,6 +57,8 @@ dockers:
     image_templates:
     - joshbeard/hello-world:latest
     - joshbeard/hello-world:{{ .Tag }}
+    - ghcr.io/joshbeard/testing-packaging/hello-world:latest
+    - ghcr.io/joshbeard/testing-packaging/hello-world:{{ .Tag }}
 aurs:
   - name: hello-world-bin
 

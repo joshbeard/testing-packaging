@@ -4,10 +4,11 @@ on:
   push:
     tags:
       - '*.*.*'
-
 jobs:
   build_release:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-go@v2
@@ -20,7 +21,13 @@ jobs:
       env:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
-    - name: build
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and Package
       run: |
         ./build.sh install_tools
         ./build.sh release
