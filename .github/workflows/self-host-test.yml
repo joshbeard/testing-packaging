@@ -1,0 +1,14 @@
+name: Test Private Runner
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  hello_world:
+    name: Check Private Runner
+    runs-on: self-hosted
+    steps:
+      - run: uname -a
+      - run: cat /etc/motd
+
