@@ -109,6 +109,37 @@ repo() {
 
     case $repo_type in
         rpm)
+            _repo_rpm
+            ;;
+        aur-custom-docker)
+            _repo_aur_custom_docker
+            ;;
+        aur-custom)
+            _repo_aur_custom
+            ;;
+        archlinux)
+            _repo_archlinux
+            ;;
+        deb)
+            _repo_deb
+            ;;
+        *)
+            echo "Unknown repository type: $repo_type"
+            exit 1
+            ;;
+    esac
+}
+
+in_docker() {
+    shift
+    repo_type=$1
+    if [ -z "$repo_type" ]; then
+        echo "No repository type specified"
+        exit 1
+    fi
+
+    case $repo_type in
+        rpm)
             _repo_rpm_docker
             ;;
         aur-custom-docker)
