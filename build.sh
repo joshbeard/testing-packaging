@@ -109,7 +109,7 @@ repo() {
 
     case $repo_type in
         rpm)
-            _repo_rpm
+            _repo_rpm_docker
             ;;
         aur-custom-docker)
             _repo_aur_custom_docker
@@ -130,7 +130,24 @@ repo() {
     esac
 }
 
+_repo_rpm_docker() {
+    docker run --rm -v ${PWD}:/work -v ${STAGING_DIR}/rpm/x86_64:/repo \
+        -e STAGING_DIR=$STAGING_DIR \
+        -w /repo -i rockylinux:9 \
+        /bin/bash -c "/work/build.sh repo rpm"
+}
+
 _repo_rpm() {
+    if ! which createrepo_c >>/dev/null 2>&1; then
+        if ! which dnf >>/dev/null 2>&1; then
+            echo "dnf not found"
+            echo "create_repo_c is required to create the repository"
+            echo "This expects to be ran on an EL-based system or container"
+            exit 1
+        fi
+        dnf install -y createrepo_c
+    fi
+
 	createrepo_c --update "${STAGING_DIR}/rpm/x86_64"
 	createrepo_c --update "${STAGING_DIR}/rpm/aarch64"
 }
