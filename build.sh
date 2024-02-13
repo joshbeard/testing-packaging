@@ -44,7 +44,7 @@ stage() {
     mkdir -p "${STAGING_DIR}/pkg/${VERSION}"
     mv $DIST_DIR/*.zip $DIST_DIR/*.tar.gz "${STAGING_DIR}/pkg/${VERSION}"/
     mv dist/checksums.txt "${STAGING_DIR}/pkg/${VERSION}/checksums.txt"
-    mv dist/aur "${STAGING_DIR}"
+    mv -f dist/aur/* "${STAGING_DIR}"
 }
 
 clean() {
