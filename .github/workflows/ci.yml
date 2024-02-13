@@ -46,7 +46,7 @@ jobs:
       - run: cat /etc/motd
 
       - name: Create RPM Repository
-        run: ./build.sh repo rpm
+        run: ./build.sh in_docker rpm
         env:
           STAGING_DIR: /mnt/repos
       #
