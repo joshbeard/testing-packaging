@@ -162,10 +162,10 @@ in_docker() {
 }
 
 _repo_rpm_docker() {
-    docker run --rm -v ${PWD}:/work -v ${STAGING_DIR}/rpm/x86_64:/repo \
+    docker run --rm -v ${PWD}:/work -v ${STAGING_DIR}/rpm/x86_64:${STAGING_DIR} \
         -e STAGING_DIR=$STAGING_DIR \
         -w /repo -i rockylinux:9 \
-        /bin/bash -c "/work/build.sh repo rpm"
+        /bin/bash -c "dnf install -y git && /work/build.sh repo rpm"
 }
 
 _repo_rpm() {
@@ -186,7 +186,7 @@ _repo_rpm() {
             echo "This expects to be ran on an EL-based system or container"
             exit 1
         fi
-        dnfinstall -y git
+        dnf install -y git
     fi
 
 	createrepo_c --update "${STAGING_DIR}/rpm/x86_64"
