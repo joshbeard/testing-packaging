@@ -46,12 +46,12 @@ jobs:
       - run: cat /etc/motd
 
       - name: Create RPM Repository
-        run: ./build.sh in_docker rpm
+        run: ./build.sh repo rpm
         env:
           STAGING_DIR: /mnt/repos
 
       - name: Create DEB Repository
-        run: ./build.sh in_docker deb
+        run: ./build.sh repo deb
         env:
           STAGING_DIR: /mnt/repos
 
