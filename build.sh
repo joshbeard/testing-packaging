@@ -162,8 +162,9 @@ in_docker() {
 }
 
 _repo_rpm_docker() {
-    docker run --rm -v ${PWD}:/work -v ${STAGING_DIR}/rpm/x86_64:${STAGING_DIR} \
+    docker run --rm -v ${PWD}:/work -v ${STAGING_DIR}:${STAGING_DIR} \
         -e STAGING_DIR=$STAGING_DIR \
+        -e VERSION=$VERSION -e RELEASE=$RELEASE \
         -w /repo -i rockylinux:9 \
         /bin/bash -c "dnf install -y git && /work/build.sh repo rpm"
 }
