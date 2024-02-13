@@ -7,7 +7,7 @@ export VERSION=$(git describe --tags --always --dirty)
 export RELEASE=$(git rev-list --count HEAD)
 
 DIST_DIR=dist
-STAGING_DIR=dist/staging
+STAGING_DIR=${STAGING_DIR:-dist/staging}
 S3_BUCKET=jbeard-test-pkgs
 
 GORELEASER_VERSION=v1.23.0
