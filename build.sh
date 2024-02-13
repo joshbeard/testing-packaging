@@ -169,14 +169,24 @@ _repo_rpm_docker() {
 }
 
 _repo_rpm() {
-    if ! which createrepo_c >>/dev/null 2>&1; then
-        if ! which dnf >>/dev/null 2>&1; then
+    if ! command -v createrepo_c >>/dev/null 2>&1; then
+        if ! command -v dnf >>/dev/null 2>&1; then
             echo "dnf not found"
             echo "create_repo_c is required to create the repository"
             echo "This expects to be ran on an EL-based system or container"
             exit 1
         fi
         dnf install -y createrepo_c
+    fi
+
+    if ! command -v git >>/dev/null 2>&1; then
+        if ! command -v dnf >>/dev/null 2>&1; then
+            echo "dnf not found"
+            echo "git is required to create the repository"
+            echo "This expects to be ran on an EL-based system or container"
+            exit 1
+        fi
+        dnfinstall -y git
     fi
 
 	createrepo_c --update "${STAGING_DIR}/rpm/x86_64"
