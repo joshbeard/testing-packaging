@@ -16,14 +16,17 @@ NFPM_VERSION=v2.35.3
 usage() {
     echo "Usage: $0 <command>"
     echo "Commands:"
-    echo "  clean - Remove build artifacts"
-    echo "  snapshot - Create a snapshot release"
-    echo "  release - Create a release"
-    echo "  stage - Stage release artifacts"
-    echo "  nfpm - Create packages"
-    echo "  repo <type> - Create a repository for the specified package type"
-    echo "  docker - Run a Docker container with the current directory mounted"
-    echo "  install_tools - Install goreleaser and nfpm"
+    echo "  clean            - Remove build artifacts"
+    echo "  snapshot         - Create a snapshot release"
+    echo "  release          - Create a release"
+    echo "  stage            - Stage release artifacts"
+    echo "  nfpm             - Create packages"
+    echo "  repo <type>      - Create a repository for the specified package type"
+    echo "  in_docker <type> - Create a repository for the specified package type in a Docker container"
+    echo "  docker           - Run a Docker container with the current directory mounted"
+    echo "  install_tools    - Install goreleaser and nfpm"
+    echo
+    echo "Repository types: archlinux, aur-custom, deb, rpm"
     exit 1
 }
 
@@ -44,9 +47,13 @@ stage() {
     mkdir -p "${STAGING_DIR}/pkg/${VERSION}"
     mv $DIST_DIR/*.zip $DIST_DIR/*.tar.gz "${STAGING_DIR}/pkg/${VERSION}"/
     mv dist/checksums.txt "${STAGING_DIR}/pkg/${VERSION}/checksums.txt"
-    mv -f dist/aur/* "${STAGING_DIR}"
+    mkdir -p "${STAGING_DIR}/aur"
+    mv -f dist/aur/* "${STAGING_DIR}/aur"
 }
 
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
 clean() {
     echo "=> Cleaning up"
     rm -rf dist/*
@@ -62,6 +69,22 @@ install_tools() {
 	go install github.com/goreleaser/nfpm/v2/cmd/nfpm@${NFPM_VERSION}
 }
 
+purge_s3() {
+    # Confirm
+    echo "This will remove all files from the S3 bucket $S3_BUCKET"
+    echo -n "Are you sure you want to continue? (yes/no): "
+    read confirm
+    if [ "$confirm" != "yes" ]; then
+        echo "Aborting"
+        exit 1
+    fi
+
+    aws s3 rm s3://$S3_BUCKET/ --recursive
+}
+
+# -----------------------------------------------------------------------------
+# NFPM Package Build
+# -----------------------------------------------------------------------------
 _nfpm() {
     echo "=> Creating packages with nfpm"
     NFPM_CFG_FILE=".nfpm.yaml"
@@ -140,19 +163,16 @@ in_docker() {
 
     case $repo_type in
         rpm)
-            _repo_rpm_docker
-            ;;
-        aur-custom-docker)
-            _repo_aur_custom_docker
+            _repo_rpm_docker_wrapper
             ;;
         aur-custom)
-            _repo_aur_custom
+            _repo_aur_custom_docker_wrapper
             ;;
         archlinux)
             _repo_archlinux
             ;;
         deb)
-            _repo_deb
+            _repo_deb_docker_wrapper
             ;;
         *)
             echo "Unknown repository type: $repo_type"
@@ -161,11 +181,15 @@ in_docker() {
     esac
 }
 
-_repo_rpm_docker() {
+
+# -----------------------------------------------------------------------------
+# RPM Repository Build
+# -----------------------------------------------------------------------------
+_repo_rpm_docker_wrapper() {
     docker run --rm -v ${PWD}:/work -v ${STAGING_DIR}:${STAGING_DIR} \
         -e STAGING_DIR=$STAGING_DIR \
         -e VERSION=$VERSION -e RELEASE=$RELEASE \
-        -w /repo -i rockylinux:9 \
+        -w /work -i rockylinux:9 \
         /bin/bash -c "dnf install -y git && /work/build.sh repo rpm"
 }
 
@@ -194,6 +218,17 @@ _repo_rpm() {
 	createrepo_c --update "${STAGING_DIR}/rpm/aarch64"
 }
 
+# -----------------------------------------------------------------------------
+# Debian Repository Build
+# -----------------------------------------------------------------------------
+_repo_deb_docker_wrapper() {
+    docker run --rm -v ${PWD}:/work -v ${STAGING_DIR}:${STAGING_DIR} \
+        -e STAGING_DIR=$STAGING_DIR \
+        -e VERSION=$VERSION -e RELEASE=$RELEASE \
+        -w /work -i debian \
+        /bin/bash -c "apt update && apt install -y git && /work/build.sh repo deb"
+}
+
 _repo_deb() {
 	AMD64_DIR="${STAGING_DIR}/deb/dists/stable/main/binary-amd64"
 	ARM64_DIR="${STAGING_DIR}/deb/dists/stable/main/binary-arm64"
@@ -219,17 +254,24 @@ _repo_deb() {
         "${STAGING_DIR}/deb/dists/stable/Release"
 }
 
+# -----------------------------------------------------------------------------
+# AUR Repository Build
+# -----------------------------------------------------------------------------
 # Runs 'repo-add' inside an 'archlinux' container to create a repository for
 # the Arch Linux packages
-_repo_aur_custom_docker() {
+_repo_aur_custom_docker_wrapper() {
     echo "=> Creating x86_64 AUR custom repository with Docker"
-    docker run --rm -v ${PWD}/${STAGING_DIR}/archlinux/x86_64:/repo \
-        -w /repo -i archlinux:latest \
+    docker run --rm -v ${PWD}:/work \
+        -v ${STAGING_DIR}:${STAGING_DIR} \
+        -w ${STAGING_DIR}/archlinux/x86_64 \
+        -i archlinux:latest \
         /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz *.pkg.tar.zst"
 
     echo "=> Creating aarch64 AUR custom repository with Docker"
-    docker run --rm -v ${PWD}/${STAGING_DIR}/archlinux/aarch64:/repo \
-        -w /repo -i archlinux:latest \
+    docker run --rm -v ${PWD}:/work \
+        -v ${STAGING_DIR}:${STAGING_DIR} \
+        -w ${STAGING_DIR}/archlinux/aarch64 \
+        -i archlinux:latest \
         /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz *.pkg.tar.zst"
 }
 
@@ -241,19 +283,6 @@ _repo_aur_custom() {
         "${STAGING_DIR}"/archlinux/aarch64/*.pkg.tar.zst
 }
 
-
-purge_s3() {
-    # Confirm
-    echo "This will remove all files from the S3 bucket $S3_BUCKET"
-    echo -n "Are you sure you want to continue? (yes/no): "
-    read confirm
-    if [ "$confirm" != "yes" ]; then
-        echo "Aborting"
-        exit 1
-    fi
-
-    aws s3 rm s3://$S3_BUCKET/ --recursive
-}
 
 # Execute the function that matches the first argument
 # e.g. `build.sh clean` runs the `clean` function

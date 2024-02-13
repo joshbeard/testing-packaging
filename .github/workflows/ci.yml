@@ -49,12 +49,16 @@ jobs:
         run: ./build.sh in_docker rpm
         env:
           STAGING_DIR: /mnt/repos
-      #
-      # - name: Create DEB Repository
-      #   run: ./build.sh repo deb
-      #
-      # - name: Create custom AUR
-      #   run: ./build.sh repo aur-custom-docker
+
+      - name: Create DEB Repository
+        run: ./build.sh in_docker deb
+        env:
+          STAGING_DIR: /mnt/repos
+
+      - name: Create AUR (custom) Repository
+        run: ./build.sh in_docker aur-custom
+        env:
+          STAGING_DIR: /mnt/repos
       #
       # - name: Upload Artifacts to S3
       #   uses: jakejarvis/s3-sync-action@master
