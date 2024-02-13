@@ -230,6 +230,17 @@ _repo_deb_docker_wrapper() {
 }
 
 _repo_deb() {
+    if ! command -v dpkg-scanpackages >>/dev/null 2>&1; then
+        if ! command -v apt >>/dev/null 2>&1; then
+            echo "apt not found"
+            echo "dpkg-scanpackages is required to create the repository"
+            echo "This expects to be ran on a Debian-based system or container"
+            exit 1
+        fi
+        apt update
+        apt install -y dpkg-dev
+    fi
+
 	AMD64_DIR="${STAGING_DIR}/deb/dists/stable/main/binary-amd64"
 	ARM64_DIR="${STAGING_DIR}/deb/dists/stable/main/binary-arm64"
 	mkdir -p "$AMD64_DIR" "$ARM64_DIR"
