@@ -246,11 +246,11 @@ _repo_deb() {
 	mkdir -p "$AMD64_DIR" "$ARM64_DIR"
 
     echo "-> Creating amd64 package file"
-	(cd "${STAGING_DIR}/deb" && dpkg-scanpackages \
+	(cd "${STAGING_DIR}/deb" && dpkg-scanpackages --multiversion \
         --arch amd64 pool/) >| "$AMD64_DIR/Packages"
 
     echo "-> Creating arm64 package file"
-	(cd "${STAGING_DIR}/deb" && dpkg-scanpackages \
+	(cd "${STAGING_DIR}/deb" && dpkg-scanpackages --multiversion \
         --arch arm64 pool/) >| "$ARM64_DIR/Packages"
 
     echo "-> Creating amd64 package index files"
