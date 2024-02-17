@@ -59,15 +59,15 @@ jobs:
         run: ./build.sh in_docker aur-custom
         env:
           STAGING_DIR: /mnt/repos
-      #
-      # - name: Upload Artifacts to S3
-      #   uses: jakejarvis/s3-sync-action@master
-      #   env:
-      #     AWS_S3_BUCKET: jbeard-test-pkgs
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_REGION: 'us-east-1'
-      #     SOURCE_DIR: 'dist/staging'
+
+      - name: Upload Artifacts to S3
+        uses: jakejarvis/s3-sync-action@master
+        env:
+          AWS_S3_BUCKET: jbeard-test-pkgs
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'
+          SOURCE_DIR: '/mnt/repos'
       #
       # - name: S3 Index Generator
       #   uses: joshbeard/s3-index-generator@main
