@@ -1,8 +1,7 @@
-# config for tools/s3-indexer
 source: /mnt/repos
 target: s3://jbeard-test-pkgs
 link_to_index: true
 relative_links: true
-title: get.jbeard.dev - {{relativePath}}
+title: get.jbeard.dev - {relativePath}
 url: https://get.jbeard.dev
 recursive: true
