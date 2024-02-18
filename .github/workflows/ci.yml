@@ -73,6 +73,7 @@ jobs:
 
       - name: S3 Index Generator
         run: |
+          ls -la ;
           docker run --rm \
             -v /mnt/repos:/mnt/repos \
             -v ${PWD}:/workspace \
