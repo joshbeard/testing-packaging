@@ -67,10 +67,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1 # Specify your AWS region here
 
-      - name: Sync directory to S3
-        run: |
-          /usr/local/bin/aws s3 sync /mnt/repos s3://jbeard-test-pkgs --delete --region us-east-1
-
       - name: S3 Index Generator
         run: |
           docker run --rm \
@@ -81,6 +77,10 @@ jobs:
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             -e AWS_REGION='us-east-1' \
             joshbeard/web-indexer:0.2.2
+
+      - name: Sync directory to S3
+        run: |
+          /usr/local/bin/aws s3 sync /mnt/repos s3://jbeard-test-pkgs --delete --region us-east-1
 
   docker-hub-doc:
     name: Publish DockerHub Readme
