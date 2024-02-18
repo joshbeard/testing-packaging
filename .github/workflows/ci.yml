@@ -12,9 +12,6 @@ jobs:
     permissions:
       packages: write
       contents: write
-    container:
-      volumes:
-          - /mnt/repos:/mnt/repos
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
