@@ -1,8 +1,0 @@
-# config for tools/s3-indexer
-bucket: jbeard-test-pkgs
-link_to_index: true
-prefix: "/"
-relative_links: true
-title: get.jbeard.dev
-url: https://get.jbeard.dev
-staging_dir: _s3_index

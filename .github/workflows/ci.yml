@@ -12,6 +12,9 @@ jobs:
     permissions:
       packages: write
       contents: write
+    container:
+      volumes:
+          - /mnt/repos:/mnt/repos
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
@@ -71,26 +74,20 @@ jobs:
         run: |
           /usr/local/bin/aws s3 sync /mnt/repos s3://jbeard-test-pkgs --delete --region us-east-1
 
-      # - name: Upload Artifacts to S3
-      #   #uses: jakejarvis/s3-sync-action@master
-      #   run:
-      #     aws 
-      #   env:
-      #     AWS_S3_BUCKET: jbeard-test-pkgs
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_REGION: 'us-east-1'
-      #     SOURCE_DIR: '/mnt/repos'
-      #
-      # - name: S3 Index Generator
-      #   uses: joshbeard/s3-index-generator@main
-      #   with:
-      #     config: .s3-indexer.yml
-      #     upload: "true"
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     AWS_REGION: 'us-east-1'
+      - name: S3 Index Generator
+        run: |
+          docker run --rm \
+            -v /mnt/repos:/mnt/repos \
+            -v ${PWD}:/workspace \
+            -w /worksapce \
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -e AWS_REGION='us-east-1' \
+            joshbeard/web-indexer:latest
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'
 
   docker-hub-doc:
     name: Publish DockerHub Readme
