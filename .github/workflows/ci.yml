@@ -77,7 +77,7 @@ jobs:
           docker run --rm \
             -v /mnt/repos:/mnt/repos \
             -v ${PWD}:/workspace \
-            -w /worksapce \
+            -w /workspace \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             -e AWS_REGION='us-east-1' \
