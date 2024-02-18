@@ -9,3 +9,8 @@ changelog.yml
 *.deb
 *.zip
 *.tar.gz
+.terraform
+*.tfstate*
+*.tar
+*.gz
+local.auto.tfvars
