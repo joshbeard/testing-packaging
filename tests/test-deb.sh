@@ -5,7 +5,7 @@ REPO_URL="${REPO_BASE}/deb/"
 REPO_FILE="/etc/apt/sources.list.d/hello_world.list"
 
 # Start a Debian container and run tests inside it
-docker run --rm -it debian:buster /bin/bash -c "
+docker run --rm debian:buster /bin/bash -c "
     apt-get update && apt-get install -y ca-certificates;
 
     # Add your repository

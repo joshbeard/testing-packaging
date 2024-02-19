@@ -5,7 +5,7 @@ REPO_URL="${REPO_BASE}/pkg"
 PACKAGE_URL="${REPO_URL}/${EXPECTED_VERSION}/${PACKAGE_NAME}_${EXPECTED_VERSION}_linux_amd64.tar.gz"
 
 # Start a Debian container and run tests inside it
-docker run --rm -it rockylinux:9 /bin/bash -c "
+docker run --rm rockylinux:9 /bin/bash -c "
     # Download the tarball
     curl -L $PACKAGE_URL -o /tmp/hello-world.tar.gz;
     tar -xzf /tmp/hello-world.tar.gz -C /tmp;

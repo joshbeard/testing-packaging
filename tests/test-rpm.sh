@@ -5,7 +5,7 @@ REPO_URL="${REPO_BASE}/rpm/\$arch"
 REPO_FILE="/etc/yum.repos.d/hello-world.repo"
 
 # Start a Debian container and run tests inside it
-docker run --rm -it rockylinux:9 /bin/bash -c "
+docker run --rm rockylinux:9 /bin/bash -c "
     # Add your repository
     echo '=== Adding repository ===';
     echo -e '[hello-world]\nname=Hello World Repository\nbaseurl=$REPO_URL\nenabled=1\ngpgcheck=0' > $REPO_FILE;

@@ -5,7 +5,7 @@ PACKAGE_NAME="hello-world"
 REPO_URL="${REPO_BASE}/archlinux/\$arch"
 
 # Start an Arch Linux container and run tests inside it
-docker run --rm -it archlinux /bin/bash -c "
+docker run --rm archlinux /bin/bash -c "
     # Add your repository to pacman.conf
     echo -e '\n[hello-world]\nSigLevel = Optional TrustAll\nServer = $REPO_URL' >> /etc/pacman.conf
 
