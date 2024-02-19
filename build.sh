@@ -93,11 +93,11 @@ _nfpm() {
         PKG_ARCH=$(echo $ARCHITECTURE | cut -d: -f1)
         FILENAME_ARCH=$(echo $ARCHITECTURE | cut -d: -f2)
 
+        PKG_SRC_DIR=$PKG_ARCH
         if [ "$PKG_ARCH" = "amd64" ]; then
-            PKG_ARCH="amd64_v1"
+            PKG_SRC_DIR="amd64_v1"
         fi
 
-        PKG_SRC_DIR=$PKG_ARCH
         export PKG_SRC="dist/${BINARY}_linux_${PKG_SRC_DIR}/${BINARY}"
         FILENAME="${PACKAGE}_${VERSION}-${RELEASE}_${FILENAME_ARCH}"
 
@@ -106,14 +106,19 @@ _nfpm() {
 
         export PKG_ARCH
 
+        echo "=== Creating RPM"
 		nfpm -f "$NFPM_CFG_FILE" package --packager rpm \
             --target "${STAGING_DIR}/rpm/${FILENAME_ARCH}/${FILENAME}.rpm"
 
+        echo "=== Creating Arch Linux package"
+        set -x
 		nfpm -f "$NFPM_CFG_FILE" package --packager archlinux \
             --target "${STAGING_DIR}/archlinux/${FILENAME_ARCH}/${FILENAME}.pkg.tar.zst"
+        set +x
 
         # Debian packages use the original architecture name and a different
         # directory structure
+        echo "=== Creating Debian package"
         PKG_ARCH=$(echo $ARCHITECTURE | cut -d: -f1)
 		FILENAME="${PACKAGE}_${VERSION}-${RELEASE}_${PKG_ARCH}"
 		mkdir -p "${STAGING_DIR}/deb/pool/main"

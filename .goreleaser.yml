@@ -12,8 +12,8 @@ builds:
     mod_timestamp: "{{ .CommitTimestamp }}"
     flags:
       - -trimpath
-    # ldflags:
-    #   - "-s -w -X main.version={{.Version}}"
+    ldflags:
+      - "-s -w -X main.version={{.Version}}"
     goos:
       - linux
       - darwin
