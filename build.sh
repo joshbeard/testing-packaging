@@ -281,22 +281,24 @@ _repo_aur_custom_docker_wrapper() {
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w ${STAGING_DIR}/archlinux/x86_64 \
         -i archlinux:latest \
-        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz *.pkg.tar.zst"
+        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}-${RELEASE}_x86_64.pkg.tar.zst"
 
     echo "=> Creating aarch64 AUR custom repository with Docker"
     docker run --rm -v ${PWD}:/work \
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w ${STAGING_DIR}/archlinux/aarch64 \
         -i archlinux:latest \
-        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz *.pkg.tar.zst"
+        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}-${RELEASE}_aarch64.pkg.tar.zst"
 }
 
 _repo_aur_custom() {
+    #hello-world_0.8.19-dirty-84_x86_64.pkg.tar.zst
+    #FILENAME="${PACKAGE}_${VERSION}-${RELEASE}_${FILENAME_ARCH}"
 	repo-add --new --remove "${STAGING_DIR}/archlinux/x86_64/${PACKAGE}.db.tar.gz" \
-        "${STAGING_DIR}"/archlinux/x86_64/*.pkg.tar.zst
+        "${STAGING_DIR}"/archlinux/x86_64/${PACKAGE}_${VERSION}-${RELEASE}_x86_64.pkg.tar.zst
 
 	repo-add --new --remove "${STAGING_DIR}/archlinux/aarch64/${PACKAGE}.db.tar.gz" \
-        "${STAGING_DIR}"/archlinux/aarch64/*.pkg.tar.zst
+        "${STAGING_DIR}"/archlinux/aarch64/${PACKAGE}_${VERSION}-${RELEASE}_aarch64.pkg.tar.zst
 }
 
 
