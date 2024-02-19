@@ -60,6 +60,9 @@ jobs:
         env:
           STAGING_DIR: /mnt/repos
 
+      - name: Test package repos
+        run: bash tests/run-tests.sh
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
