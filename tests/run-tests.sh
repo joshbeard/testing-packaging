@@ -7,6 +7,8 @@ FAILED=0
 FAILED_TESTS=""
 PASSED_TESTS=""
 
+export TERM=xterm-256color
+
 export REPO_BASE="https://pkgs.home.jbeard.dev"
 export EXPECTED_VERSION=$(git describe --tags --always --dirty)
 
