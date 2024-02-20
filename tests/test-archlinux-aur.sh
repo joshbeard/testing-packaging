@@ -12,6 +12,9 @@ docker run --rm archlinux /bin/bash -c "
     # Create a user
     useradd -m -s /bin/bash archuser
 
+    # Add user to sudoers
+    echo \"archuser ALL=(ALL) NOPASSWD: ALL\" | sudo EDITOR=\"tee -a\" visudo
+
     su - archuser -c '
         set -e
         set -x
