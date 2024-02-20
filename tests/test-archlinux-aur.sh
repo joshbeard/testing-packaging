@@ -22,6 +22,10 @@ docker run --rm archlinux /bin/bash -c "
         curl -L $REPO_URL/${PACKAGE_NAME}-bin.pkgbuild -o PKGBUILD
         curl -L $REPO_URL/${PACKAGE_NAME}-bin.srcinfo -o .SRCINFO
 
+        # Replace the 'https://get.jbeard.dev' URL with REPO_BASE
+        sed -i \"s|https://get.jbeard.dev|$REPO_BASE|g\" PKGBUILD
+        sed -i \"s|https://get.jbeard.dev|$REPO_BASE|g\" .SRCINFO
+
         makepkg -si --noconfirm
     '
 

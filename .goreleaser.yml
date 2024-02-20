@@ -145,7 +145,7 @@ aurs:
     # Default: depends on the client
     # Templates: allowed
     #url_template: "https://get.jbeard.dev/archlinux/{{ .Tag }}/{{ .ArtifactName }}"
-    url_template: "https://get.jbeard.dev/pkg/{{ .ArtifactName }}"
+    url_template: "https://get.jbeard.dev/pkg/{{ .Version }}/{{ .ArtifactName }}"
 
     # The SSH private key that should be used to commit to the Git repository.
     # This can either be a path or the key contents.
