@@ -296,10 +296,10 @@ _repo_aur_custom() {
     #hello-world_0.8.19-dirty-84_x86_64.pkg.tar.zst
     #FILENAME="${PACKAGE}_${VERSION}-${RELEASE}_${FILENAME_ARCH}"
 	repo-add --new --remove "${STAGING_DIR}/archlinux/x86_64/${PACKAGE}.db.tar.gz" \
-        "${STAGING_DIR}"/archlinux/x86_64/${PACKAGE}_${VERSION}-${RELEASE}_x86_64.pkg.tar.zst
+        "${STAGING_DIR}"/archlinux/x86_64/${PACKAGE}_${VERSION}-${RELEASE}_amd64.pkg.tar.zst
 
 	repo-add --new --remove "${STAGING_DIR}/archlinux/aarch64/${PACKAGE}.db.tar.gz" \
-        "${STAGING_DIR}"/archlinux/aarch64/${PACKAGE}_${VERSION}-${RELEASE}_aarch64.pkg.tar.zst
+        "${STAGING_DIR}"/archlinux/aarch64/${PACKAGE}_${VERSION}-${RELEASE}_arm64.pkg.tar.zst
 }
 
 
