@@ -282,14 +282,14 @@ _repo_aur_custom_docker_wrapper() {
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w ${STAGING_DIR}/archlinux/x86_64 \
         -i archlinux:latest \
-        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}-${RELEASE}_x86_64.pkg.tar.zst"
+        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}-${RELEASE}_amd64.pkg.tar.zst"
 
     echo "=> Creating aarch64 AUR custom repository with Docker"
     docker run --rm -v ${PWD}:/work \
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w ${STAGING_DIR}/archlinux/aarch64 \
         -i archlinux:latest \
-        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}-${RELEASE}_aarch64.pkg.tar.zst"
+        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}-${RELEASE}_arm64.pkg.tar.zst"
 }
 
 _repo_aur_custom() {
