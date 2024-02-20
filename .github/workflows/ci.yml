@@ -35,11 +35,13 @@ jobs:
 
       - name: Build and Package
         run: |
+          echo "$GPG_PRIVATE_KEY" > key.gpg
           ./build.sh install_tools
           ./build.sh release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_FINGERPRINT: ${{ secrets.GPG_FINGERPRINT }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           STAGING_DIR: /mnt/repos
 
       - run: uname -a

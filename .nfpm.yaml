@@ -17,3 +17,7 @@ contents:
 - src: "${PKG_SRC}"
   dst: /usr/bin/hello-world
   expand: true
+rpm:
+  signature: key.gpg
+deb:
+  signature: key.gpg
