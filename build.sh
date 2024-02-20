@@ -50,6 +50,7 @@ stage() {
     mv dist/checksums.txt.sig "${STAGING_DIR}/pkg/${VERSION}/checksums.txt.sig"
     mkdir -p "${STAGING_DIR}/aur"
     mv -f dist/aur/* "${STAGING_DIR}/aur"
+    _stage_repos
 }
 
 # -----------------------------------------------------------------------------
@@ -86,9 +87,8 @@ purge_s3() {
 # -----------------------------------------------------------------------------
 # NFPM Package Build
 # -----------------------------------------------------------------------------
-_nfpm() {
+_stage_repos() {
     echo "=> Creating packages with nfpm"
-    NFPM_CFG_FILE=".nfpm.yaml"
     for ARCHITECTURE in amd64:x86_64 arm64:aarch64; do
         echo "=> Creating package for $ARCHITECTURE"
         PKG_ARCH=$(echo $ARCHITECTURE | cut -d: -f1)
@@ -108,14 +108,10 @@ _nfpm() {
         export PKG_ARCH
 
         echo "=== Creating RPM"
-		nfpm -f "$NFPM_CFG_FILE" package --packager rpm \
-            --target "${STAGING_DIR}/rpm/${FILENAME_ARCH}/${FILENAME}.rpm"
+        cp "${PKG_SRC}" "${STAGING_DIR}/rpm/${FILENAME_ARCH}/${FILENAME}.rpm"
 
         echo "=== Creating Arch Linux package"
-        set -x
-		nfpm -f "$NFPM_CFG_FILE" package --packager archlinux \
-            --target "${STAGING_DIR}/archlinux/${FILENAME_ARCH}/${FILENAME}.pkg.tar.zst"
-        set +x
+        cp "${PKG_SRC}" "${STAGING_DIR}/archlinux/${FILENAME_ARCH}/${FILENAME}.pkg.tar.zst"
 
         # Debian packages use the original architecture name and a different
         # directory structure
@@ -123,8 +119,7 @@ _nfpm() {
         PKG_ARCH=$(echo $ARCHITECTURE | cut -d: -f1)
 		FILENAME="${PACKAGE}_${VERSION}-${RELEASE}_${PKG_ARCH}"
 		mkdir -p "${STAGING_DIR}/deb/pool/main"
-		nfpm -f "$NFPM_CFG_FILE" package --packager deb \
-            --target "${STAGING_DIR}/deb/pool/main/${FILENAME}.deb"
+        cp "${PKG_SRC}" "${STAGING_DIR}/deb/pool/main/${FILENAME}.deb"
     done
 }
 
@@ -282,24 +277,12 @@ _repo_aur_custom_docker_wrapper() {
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w ${STAGING_DIR}/archlinux/x86_64 \
         -i archlinux:latest \
-        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}-${RELEASE}_amd64.pkg.tar.zst"
-
-    echo "=> Creating aarch64 AUR custom repository with Docker"
-    docker run --rm -v ${PWD}:/work \
-        -v ${STAGING_DIR}:${STAGING_DIR} \
-        -w ${STAGING_DIR}/archlinux/aarch64 \
-        -i archlinux:latest \
-        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}-${RELEASE}_arm64.pkg.tar.zst"
+        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}_amd64.pkg.tar.zst"
 }
 
 _repo_aur_custom() {
-    #hello-world_0.8.19-dirty-84_x86_64.pkg.tar.zst
-    #FILENAME="${PACKAGE}_${VERSION}-${RELEASE}_${FILENAME_ARCH}"
 	repo-add --new --remove "${STAGING_DIR}/archlinux/x86_64/${PACKAGE}.db.tar.gz" \
-        "${STAGING_DIR}"/archlinux/x86_64/${PACKAGE}_${VERSION}-${RELEASE}_amd64.pkg.tar.zst
-
-	repo-add --new --remove "${STAGING_DIR}/archlinux/aarch64/${PACKAGE}.db.tar.gz" \
-        "${STAGING_DIR}"/archlinux/aarch64/${PACKAGE}_${VERSION}-${RELEASE}_arm64.pkg.tar.zst
+        "${STAGING_DIR}"/archlinux/x86_64/${PACKAGE}_${VERSION}_amd64.pkg.tar.zst
 }
 
 
