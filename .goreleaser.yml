@@ -18,8 +18,7 @@ metadata:
   mod_timestamp: "{{ .CommitTimestamp }}"
 
 builds:
-  - id: "hello-world"
-    env:
+  - env:
       # goreleaser does not work with CGO, it could also complicate
       # usage by users in CI/CD systems like Terraform Cloud where
       # they are unable to install libraries.
@@ -35,15 +34,17 @@ builds:
       - windows
       - freebsd
     goarch:
+      - "386"
       - amd64
       - arm
       - arm64
+    ignore:
+      - goos: windows
+        goarch: arm
     goarm:
       - "7"
 archives:
-  - id: "tarball"
-    # builds:
-    #   - "hello-world"
+  - #
     format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
@@ -175,3 +176,37 @@ aurs:
     # Templates: allowed
     # Since: v1.23
     #directory: "."
+    #
+
+nfpms:
+  - vendor: "Josh Beard"
+    maintainer: "Josh Beard <josh@jbeard.dev>"
+    homepage: "http://github.com/joshbeard/testing-packaging"
+    license: "MIT"
+    description: |
+      FooBar is the great foo and bar software.
+        And this can be in multiple lines!
+    #prerelease: beta1
+    release: "${RELEASE}"
+    priority: "extra"
+    section: vcs
+    # contents:
+    #   - src: dist/hello-world_{{ .Os }}_{{ .Arch }}/hello-world
+    #     dst: /usr/bin/hello-world
+    #     expand: true
+    formats:
+      - apk
+      - deb
+      - rpm
+      - archlinux
+    rpm:
+      signature:
+        key_file: key.gpg
+    deb:
+      signature:
+        key_file: key.gpg
+    apk:
+      #signature:
+      #  key_file: key.gpg
+    archlinux:
+      packager: Josh Beard <josh@jbeard.dev>

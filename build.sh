@@ -20,7 +20,7 @@ usage() {
     echo "  snapshot         - Create a snapshot release"
     echo "  release          - Create a release"
     echo "  stage            - Stage release artifacts"
-    echo "  nfpm             - Create packages"
+#    echo "  nfpm             - Create packages"
     echo "  repo <type>      - Create a repository for the specified package type"
     echo "  in_docker <type> - Create a repository for the specified package type in a Docker container"
     echo "  docker           - Run a Docker container with the current directory mounted"
@@ -31,15 +31,15 @@ usage() {
 }
 
 snapshot() {
-    goreleaser --snapshot --skip-publish --clean --skip-sign
+    goreleaser --snapshot --skip=publish --clean #--skip-sign
     stage
-    _nfpm
+    # _nfpm
 }
 
 release() {
     goreleaser release --clean
     stage
-    _nfpm
+    # _nfpm
 }
 
 stage() {
@@ -47,6 +47,7 @@ stage() {
     mkdir -p "${STAGING_DIR}/pkg/${VERSION}"
     mv $DIST_DIR/*.zip $DIST_DIR/*.tar.gz "${STAGING_DIR}/pkg/${VERSION}"/
     mv dist/checksums.txt "${STAGING_DIR}/pkg/${VERSION}/checksums.txt"
+    mv dist/checksums.txt.sig "${STAGING_DIR}/pkg/${VERSION}/checksums.txt.sig"
     mkdir -p "${STAGING_DIR}/aur"
     mv -f dist/aur/* "${STAGING_DIR}/aur"
 }
