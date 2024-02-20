@@ -100,7 +100,7 @@ _stage_repos() {
         fi
 
         export PKG_SRC="dist/${BINARY}_linux_${PKG_SRC_DIR}/${BINARY}"
-        FILENAME="${PACKAGE}_${VERSION}-${RELEASE}_${FILENAME_ARCH}"
+        FILENAME="${PACKAGE}_${VERSION}_${FILENAME_ARCH}"
 
         mkdir -p "${STAGING_DIR}/archlinux/${FILENAME_ARCH}"
         mkdir -p "${STAGING_DIR}/rpm/${FILENAME_ARCH}"
@@ -117,7 +117,7 @@ _stage_repos() {
         # directory structure
         echo "=== Creating Debian package"
         PKG_ARCH=$(echo $ARCHITECTURE | cut -d: -f1)
-		FILENAME="${PACKAGE}_${VERSION}-${RELEASE}_${PKG_ARCH}"
+		FILENAME="${PACKAGE}_${VERSION}_${PKG_ARCH}"
 		mkdir -p "${STAGING_DIR}/deb/pool/main"
         cp "${PKG_SRC}" "${STAGING_DIR}/deb/pool/main/${FILENAME}.deb"
     done
