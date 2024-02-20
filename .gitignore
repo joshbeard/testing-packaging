@@ -14,3 +14,4 @@ changelog.yml
 *.tar
 *.gz
 local.auto.tfvars
+key.gpg
