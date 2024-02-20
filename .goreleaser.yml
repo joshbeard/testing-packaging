@@ -63,7 +63,7 @@ archives:
       group: root
       owner: root
 signs:
-  - artifacts: checksum
+  - artifacts: all
     args:
       - "--batch"
       - "--local-user"
