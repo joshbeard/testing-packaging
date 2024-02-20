@@ -1,7 +1,22 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=jcroql
+version: 1
+
 project_name: hello-world
+
 before:
   hooks:
     - go mod tidy
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+checksum:
+  name_template: 'checksums.txt'
+
+metadata:
+  mod_timestamp: "{{ .CommitTimestamp }}"
+
 builds:
   - id: "hello-world"
     env:
@@ -21,25 +36,32 @@ builds:
       - freebsd
     goarch:
       - amd64
+      - arm
       - arm64
-    main: .
-    binary: hello-world
+    goarm:
+      - "7"
 archives:
   - id: "tarball"
-    builds:
-      - "hello-world"
+    # builds:
+    #   - "hello-world"
     format: tar.gz
-    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    # name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
         format: zip
     files: []
     #   - src: LICENSE
     #   - src: README.md
-snapshot:
-  name_template: "{{ .Tag }}-next"
-checksum:
-  name_template: 'checksums.txt'
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end -}}
+    builds_info:
+      group: root
+      owner: root
 signs:
   - artifacts: checksum
     args:
@@ -51,42 +73,30 @@ signs:
       - "--detach-sign"
       - "${artifact}"
 dockers:
-  - id: hello-world
-    ids:
-      - hello-world
-    image_templates:
-    - joshbeard/hello-world:latest
-    - joshbeard/hello-world:{{ .Tag }}
-    - ghcr.io/joshbeard/testing-packaging/hello-world:latest
-    - ghcr.io/joshbeard/testing-packaging/hello-world:{{ .Tag }}
+  - image_templates:
+      - joshbeard/hello-world:latest
+      - joshbeard/hello-world:{{ .Tag }}
+      - ghcr.io/joshbeard/testing-packaging/hello-world:latest
+      - ghcr.io/joshbeard/testing-packaging/hello-world:{{ .Tag }}
+    build_flag_templates:
+      - "--pull"
+      - "--platform=linux/amd64"
+    use: buildx
+
 aurs:
   - name: hello-world-bin
-
-    # Artifact IDs to filter for.
-    # Empty means all IDs (no filter).
-    #ids:
-    #  - foo
-    #  - bar
 
     homepage: "https://get.jbeard.dev/"
     description: "Says hello world"
 
-    # The maintainers of the package.
     maintainers:
       - 'Josh Beard <josh@jbeard.dev>'
 
     #contributors:
     #  - 'Foo Zaz <foo at zaz dot com>'
 
-    # SPDX identifier of your app's license.
     license: "MIT"
 
-    # Custom package instructions.
-    # which is not always correct.
-    #
-    # We recommend you override this, installing the binary, license and
-    # everything else your package needs.
-    #
     # Default: 'install -Dm755 "./PROJECT_NAME" "${pkgdir}/usr/bin/PROJECT_NAME"'
     #package: |-
     #  # bin
@@ -120,7 +130,7 @@ aurs:
     # If you build for multiple GOAMD64 versions, you may use this to choose which one to use.
     #
     # Default: 'v1'.
-    goamd64: v2
+    goamd64: v1
 
     # The value to be passed to `GIT_SSH_COMMAND`.
     # This is mainly used to specify the SSH private key used to pull/push to

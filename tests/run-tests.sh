@@ -10,15 +10,28 @@ PASSED_TESTS=""
 export TERM=xterm-256color
 
 export REPO_BASE="https://pkgs.home.jbeard.dev"
-export EXPECTED_VERSION=$(git describe --tags --always --dirty)
+
+# Trim to X.Y.Z
+export EXPECTED_VERSION=$(git describe --tags --always --dirty | sed -E 's/([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
 
 green=`tput setaf 2`
 red=`tput setaf 1`
 reset=`tput sgr0`
 
-for test_script in $CURRENT_DIR/test-*.sh; do
+tests=$(ls $CURRENT_DIR/test-*.sh)
+
+if [ -n "$1" ]; then
+    tests=$(ls $CURRENT_DIR/test-$1*.sh)
+fi
+
+if [ -z "$tests" ]; then
+    echo "No tests found in $CURRENT_DIR"
+    exit 1
+fi
+
+for test_script in $tests; do
     echo "==============================================================================="
-    echo "▶ Running $test_script"
+    echo "▶ Running $test_script for $EXPECTED_VERSION"
     echo "==============================================================================="
     if ! bash $test_script; then
         echo "${red}FAILED: ${test_script}${reset}"
