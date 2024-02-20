@@ -1,4 +1,4 @@
-# Testing Packaging
+# 🚧 Testing Packaging 🚧
 
 This repository is to test out building an artifact and
 packaging it in a variety of formats, while also providing a
@@ -49,13 +49,21 @@ software in popular package repositories and formats.
 
 ### Second
 
+* Can package repo metadata be updated without the files available locally?
+    * Can we sync the metadata files from s3 in ci/cd and update them with the
+      new packages while keeping the existing packages in the database (but not
+      locally available in ci/cd)?
+    * If not, persistent storage.
+        * run the CI job on a private runner with persistent storage (home +
+          nfs or a container with?)
+
 * [x] Produce an RPM repository on S3
     * [x] Verify
-* [ ] Provide a DEB repository on S3
+* [x] Provide a DEB repository on S3
     * [ ] Verify
 * [ ] Provide a Homebrew Cask repository
     * [ ] Verify
-* [ ] Arch AUR
+* [x] Arch AUR
     * [ ] Verify
 * [x] Docker image
     * [x] Publish to Docker Hub
