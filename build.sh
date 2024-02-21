@@ -3,8 +3,14 @@ set -a
 export PACKAGE="hello-world"
 export BINARY="hello-world"
 
+#export VERSION=$(git describe --tags --always --dirty)
 export VERSION=$(git describe --tags --always --dirty)
 export RELEASE=$(git rev-list --count HEAD)
+
+# if dirty, replace "-dirty" with "-next"
+if echo $VERSION | grep -q dirty; then
+    export VERSION=$(echo $VERSION | sed 's/-dirty/-next/')
+fi
 
 DIST_DIR=dist
 STAGING_DIR=${STAGING_DIR:-dist/staging}
@@ -88,39 +94,29 @@ purge_s3() {
 # NFPM Package Build
 # -----------------------------------------------------------------------------
 _stage_repos() {
-    echo "=> Creating packages with nfpm"
-    for ARCHITECTURE in amd64:x86_64 arm64:aarch64; do
-        echo "=> Creating package for $ARCHITECTURE"
-        PKG_ARCH=$(echo $ARCHITECTURE | cut -d: -f1)
-        FILENAME_ARCH=$(echo $ARCHITECTURE | cut -d: -f2)
+    echo "=== Staging RPM packages"
+    mkdir -p "${STAGING_DIR}/rpm/x86_64"
+    mkdir -p "${STAGING_DIR}/rpm/aarch64"
+    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.rpm" \
+        "${STAGING_DIR}/rpm/x86_64/${PACKAGE}_${VERSION}_linux_x86_64.rpm"
+    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.rpm" \
+        "${STAGING_DIR}/rpm/aarch64/${PACKAGE}_${VERSION}_linux_aarch64.rpm"
 
-        PKG_SRC_DIR=$PKG_ARCH
-        if [ "$PKG_ARCH" = "amd64" ]; then
-            PKG_SRC_DIR="amd64_v1"
-        fi
 
-        export PKG_SRC="dist/${BINARY}_linux_${PKG_SRC_DIR}/${BINARY}"
-        FILENAME="${PACKAGE}_${VERSION}_${FILENAME_ARCH}"
+    echo "=== Staging Arch Linux packages"
+    mkdir -p "${STAGING_DIR}/archlinux/x86_64"
+    mkdir -p "${STAGING_DIR}/archlinux/aarch64"
+    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.pkg.tar.zst" \
+        "${STAGING_DIR}/archlinux/x86_64/${PACKAGE}_${VERSION}_linux_x86_64.pkg.tar.zst"
+    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.pkg.tar.zst" \
+        "${STAGING_DIR}/archlinux/aarch64/${PACKAGE}_${VERSION}_linux_aarch64.pkg.tar.zst"
 
-        mkdir -p "${STAGING_DIR}/archlinux/${FILENAME_ARCH}"
-        mkdir -p "${STAGING_DIR}/rpm/${FILENAME_ARCH}"
-
-        export PKG_ARCH
-
-        echo "=== Creating RPM"
-        cp "${PKG_SRC}" "${STAGING_DIR}/rpm/${FILENAME_ARCH}/${FILENAME}.rpm"
-
-        echo "=== Creating Arch Linux package"
-        cp "${PKG_SRC}" "${STAGING_DIR}/archlinux/${FILENAME_ARCH}/${FILENAME}.pkg.tar.zst"
-
-        # Debian packages use the original architecture name and a different
-        # directory structure
-        echo "=== Creating Debian package"
-        PKG_ARCH=$(echo $ARCHITECTURE | cut -d: -f1)
-		FILENAME="${PACKAGE}_${VERSION}_${PKG_ARCH}"
-		mkdir -p "${STAGING_DIR}/deb/pool/main"
-        cp "${PKG_SRC}" "${STAGING_DIR}/deb/pool/main/${FILENAME}.deb"
-    done
+    echo "=== Staging Debian packages"
+    mkdir -p "${STAGING_DIR}/deb/pool/main"
+    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.deb" \
+        "${STAGING_DIR}/deb/pool/main/${PACKAGE}_${VERSION}_linux_amd64.deb"
+    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.deb" \
+        "${STAGING_DIR}/deb/pool/main/${PACKAGE}_${VERSION}_linux_arm64.deb"
 }
 
 repo() {
