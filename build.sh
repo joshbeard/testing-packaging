@@ -98,25 +98,25 @@ _stage_repos() {
     mkdir -p "${STAGING_DIR}/rpm/x86_64"
     mkdir -p "${STAGING_DIR}/rpm/aarch64"
     cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.rpm" \
-        "${STAGING_DIR}/rpm/x86_64/${PACKAGE}_${VERSION}_linux_x86_64.rpm"
+        "${STAGING_DIR}/rpm/x86_64/${PACKAGE}_${VERSION}_x86_64.rpm"
     cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.rpm" \
-        "${STAGING_DIR}/rpm/aarch64/${PACKAGE}_${VERSION}_linux_aarch64.rpm"
+        "${STAGING_DIR}/rpm/aarch64/${PACKAGE}_${VERSION}_aarch64.rpm"
 
 
     echo "=== Staging Arch Linux packages"
     mkdir -p "${STAGING_DIR}/archlinux/x86_64"
     # mkdir -p "${STAGING_DIR}/archlinux/aarch64"
     cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.pkg.tar.zst" \
-        "${STAGING_DIR}/archlinux/x86_64/${PACKAGE}_${VERSION}_linux_x86_64.pkg.tar.zst"
+        "${STAGING_DIR}/archlinux/x86_64/${PACKAGE}_${VERSION}_x86_64.pkg.tar.zst"
     # cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.pkg.tar.zst" \
     #     "${STAGING_DIR}/archlinux/aarch64/${PACKAGE}_${VERSION}_linux_aarch64.pkg.tar.zst"
 
     echo "=== Staging Debian packages"
     mkdir -p "${STAGING_DIR}/deb/pool/main"
     cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.deb" \
-        "${STAGING_DIR}/deb/pool/main/${PACKAGE}_${VERSION}_linux_amd64.deb"
+        "${STAGING_DIR}/deb/pool/main/${PACKAGE}_${VERSION}_amd64.deb"
     cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.deb" \
-        "${STAGING_DIR}/deb/pool/main/${PACKAGE}_${VERSION}_linux_arm64.deb"
+        "${STAGING_DIR}/deb/pool/main/${PACKAGE}_${VERSION}_arm64.deb"
 }
 
 repo() {
