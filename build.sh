@@ -105,11 +105,11 @@ _stage_repos() {
 
     echo "=== Staging Arch Linux packages"
     mkdir -p "${STAGING_DIR}/archlinux/x86_64"
-    mkdir -p "${STAGING_DIR}/archlinux/aarch64"
+    # mkdir -p "${STAGING_DIR}/archlinux/aarch64"
     cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.pkg.tar.zst" \
         "${STAGING_DIR}/archlinux/x86_64/${PACKAGE}_${VERSION}_linux_x86_64.pkg.tar.zst"
-    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.pkg.tar.zst" \
-        "${STAGING_DIR}/archlinux/aarch64/${PACKAGE}_${VERSION}_linux_aarch64.pkg.tar.zst"
+    # cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.pkg.tar.zst" \
+    #     "${STAGING_DIR}/archlinux/aarch64/${PACKAGE}_${VERSION}_linux_aarch64.pkg.tar.zst"
 
     echo "=== Staging Debian packages"
     mkdir -p "${STAGING_DIR}/deb/pool/main"
@@ -273,12 +273,12 @@ _repo_aur_custom_docker_wrapper() {
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w ${STAGING_DIR}/archlinux/x86_64 \
         -i archlinux:latest \
-        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}_amd64.pkg.tar.zst"
+        /bin/bash -c "repo-add --new ${PACKAGE}.db.tar.gz ${PACKAGE}_${VERSION}_x86_64.pkg.tar.zst"
 }
 
 _repo_aur_custom() {
 	repo-add --new --remove "${STAGING_DIR}/archlinux/x86_64/${PACKAGE}.db.tar.gz" \
-        "${STAGING_DIR}"/archlinux/x86_64/${PACKAGE}_${VERSION}_amd64.pkg.tar.zst
+        "${STAGING_DIR}"/archlinux/x86_64/${PACKAGE}_${VERSION}_x86_64.pkg.tar.zst
 }
 
 
