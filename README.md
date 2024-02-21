@@ -71,8 +71,8 @@ software in popular package repositories and formats.
 
 ### Third
 
-* [ ] RPM repository GPG
-* [ ] DEB repository GPG
+* [~] RPM repository GPG
+* [~] DEB repository GPG
 
 ### Fourth
 
@@ -81,7 +81,7 @@ software in popular package repositories and formats.
 * [ ] Serve install script for curl/wget by default for root request
 * [ ] Changelogs
 * [ ] Release pipeline/workflow
-* [ ] Tests
+* [~] Tests
     * Local web service serving `dist/stage/`
     * Test in Docker container
 * [ ] Backups/Replication
@@ -93,7 +93,8 @@ software in popular package repositories and formats.
 
 ### Other Ideas
 
-* [ ] Lambda@Edge function for serving directory listings?
+* [x] Lambda@Edge function for serving directory listings?
+    * Going with static [web-indexer](https://github.com/joshbeard/web-indexer) for now.
 * [ ] FreeBSD port and package
 * [ ] OpenBSD port and package
 
@@ -101,7 +102,7 @@ software in popular package repositories and formats.
 
 * [GoReleaser](https://goreleaser.com/)
 * [nFpm](https://nfpm.goreleaser.com/)
-* [s3-index-generator](https://github.com/joshbeard/s3-index-generator)
+* [web-indexer](https://github.com/joshbeard/web-indexer)
 
 ## Usage
 
