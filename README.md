@@ -200,7 +200,3 @@ hello-world_1.2.3-1_arm64   # DEB
 hello-world_1.2.3-1_x86_64  # RPM
 hello-world_1.2.3-1_aarch64 # RPM
 ```
-
-## Observations
-
-* Debian repos are a pain
