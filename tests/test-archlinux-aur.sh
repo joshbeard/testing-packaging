@@ -1,8 +1,9 @@
 #!/bin/bash
+script_dir=$(cd $(dirname $0) && pwd)
+source $script_dir/common.sh
 
-# Define package details
-PACKAGE_NAME="hello-world"
 REPO_URL="${REPO_BASE}/aur"
+STAGING_URL="https://get.jbeard.dev"
 
 docker run --rm archlinux /bin/bash -c "
     pacman -Syu --noconfirm git base-devel
@@ -18,19 +19,18 @@ docker run --rm archlinux /bin/bash -c "
         curl -L $REPO_URL/${PACKAGE_NAME}-bin.pkgbuild -o PKGBUILD
         curl -L $REPO_URL/${PACKAGE_NAME}-bin.srcinfo -o .SRCINFO
 
-        # Replace the 'https://get.jbeard.dev' URL with REPO_BASE
-        sed -i \"s|https://get.jbeard.dev|$REPO_BASE|g\" PKGBUILD
-        sed -i \"s|https://get.jbeard.dev|$REPO_BASE|g\" .SRCINFO
+        sed -i \"s|$STAGING_URL|$REPO_BASE|g\" PKGBUILD
+        sed -i \"s|$STAGING_URL|$REPO_BASE|g\" .SRCINFO
 
         makepkg -si --noconfirm
     '
 
-    if ! command -v $PACKAGE_NAME &> /dev/null; then
-        echo '$PACKAGE_NAME could not be installed.' >&2;
+    if ! command -v $EXECUTABLE_NAME &> /dev/null; then
+        echo '$EXECUTABLE_NAME could not be installed.' >&2;
         exit 1
     fi
 
-    INSTALLED_VERSION=\$($PACKAGE_NAME --version | grep -oP '\d+\.\d+\.\d+')
+    INSTALLED_VERSION=\$($EXECUTABLE_NAME --version | grep -oP '\d+\.\d+\.\d+')
     if [ \"\$INSTALLED_VERSION\" != \"$EXPECTED_VERSION\" ]; then
         echo 'Version mismatch: expected $EXPECTED_VERSION, got '\"\$INSTALLED_VERSION\"'.' >&2
         exit 1

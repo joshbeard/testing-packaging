@@ -31,10 +31,10 @@ builds:
     goos:
       - linux
       - darwin
-      - windows
-      - freebsd
-      - openbsd
-      - netbsd
+      # - windows
+      # - freebsd
+      # - openbsd
+      # - netbsd
     goarch:
       - "386"
       - amd64
@@ -189,7 +189,7 @@ nfpms:
       FooBar is the great foo and bar software.
         And this can be in multiple lines!
     #prerelease: beta1
-    release: "${RELEASE}"
+    release: "1" # FIXME: use variable
     priority: "extra"
     section: vcs
     # contents:
@@ -207,7 +207,8 @@ nfpms:
     deb:
       signature:
         key_file: key.gpg
-    apk:
+    # FIXME: apk signing
+    apk: {}
       #signature:
       #  key_file: key.gpg
     archlinux:

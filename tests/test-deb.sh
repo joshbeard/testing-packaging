@@ -1,16 +1,17 @@
 #!/bin/bash
+script_dir=$(cd $(dirname $0) && pwd)
+source $script_dir/common.sh
 
-PACKAGE_NAME="hello-world"
 REPO_URL="${REPO_BASE}/deb/"
-REPO_FILE="/etc/apt/sources.list.d/hello_world.list"
+REPO_FILE="/etc/apt/sources.list.d/${PACKAGE_NAME}.list"
 
 docker run --rm debian:buster /bin/bash -c "
     apt-get update && apt-get install -y ca-certificates;
     echo 'deb [trusted=yes] $REPO_URL stable main' > $REPO_FILE;
     apt-get update && apt-get install -y $PACKAGE_NAME;
 
-    if ! command -v $PACKAGE_NAME &> /dev/null; then
-        echo '$PACKAGE_NAME could not be installed.' >&2;
+    if ! command -v $EXECUTABLE_NAME &> /dev/null; then
+        echo '$EXECUTABLE_NAME could not be installed.' >&2;
         exit 1;
     fi;
 
@@ -20,7 +21,7 @@ docker run --rm debian:buster /bin/bash -c "
         exit 1;
     fi;
 
-    INSTALLED_VERSION=\$($PACKAGE_NAME --version | grep -oP '\d+\.\d+\.\d+');
+    INSTALLED_VERSION=\$($EXECUTABLE_NAME --version | grep -oP '\d+\.\d+\.\d+');
     if [ \"\$INSTALLED_VERSION\" != \"$EXPECTED_VERSION\" ]; then
         echo 'Version mismatch: expected $EXPECTED_VERSION, got '\"\$INSTALLED_VERSION\"'.' >&2;
         exit 1;

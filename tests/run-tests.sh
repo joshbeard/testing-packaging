@@ -1,8 +1,7 @@
 #!/bin/bash
-export REPO_BASE="https://pkgs.home.jbeard.dev"
-export EXPECTED_VERSION=$(git describe --tags --always --dirty | sed -E 's/([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
-
 CURRENT_DIR=$(cd $(dirname $0) && pwd)
+source $CURRENT_DIR/common.sh
+
 FAILED=0
 FAILED_TESTS=""
 PASSED_TESTS=""
@@ -17,12 +16,6 @@ if [ -z "$tests" ]; then
     echo "No tests found in $CURRENT_DIR"
     exit 1
 fi
-
-green=`tput setaf 2`
-red=`tput setaf 1`
-reset=`tput sgr0`
-
-export TERM=xterm-256color
 
 for test_script in $tests; do
     echo "==============================================================================="
