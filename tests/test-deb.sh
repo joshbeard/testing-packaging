@@ -9,7 +9,7 @@ docker run --rm debian:buster /bin/bash -c "
     apt-get update && apt-get install -y ca-certificates wget gpg;
 
     echo '> Downloading gpg key'
-    wget -qO- https://${REPO_BASE}/gpg-pubkey.asc | gpg --dearmor > ${PACKAGE_NAME}-repo-keyring.gpg;
+    wget -qO- ${REPO_BASE}/gpg-pubkey.asc | gpg --dearmor > ${PACKAGE_NAME}-repo-keyring.gpg;
     mkdir -p /etc/apt/keyrings;
     echo '> Installing gpg key'
     cat ${PACKAGE_NAME}-repo-keyring.gpg > /etc/apt/keyrings/${PACKAGE_NAME}-repo-keyring.gpg;
