@@ -3,7 +3,7 @@ script_dir=$(cd $(dirname $0) && pwd)
 source $script_dir/common.sh
 
 REPO_URL="${REPO_BASE}/aur"
-STAGING_URL="https://get.jbeard.dev"
+PROD_URL="https://get.jbeard.dev"
 
 docker run --rm archlinux /bin/bash -c "
     pacman -Syu --noconfirm git base-devel
@@ -19,8 +19,8 @@ docker run --rm archlinux /bin/bash -c "
         curl -L $REPO_URL/${PACKAGE_NAME}-bin.pkgbuild -o PKGBUILD
         curl -L $REPO_URL/${PACKAGE_NAME}-bin.srcinfo -o .SRCINFO
 
-        sed -i \"s|$STAGING_URL|$REPO_BASE|g\" PKGBUILD
-        sed -i \"s|$STAGING_URL|$REPO_BASE|g\" .SRCINFO
+        sed -i \"s|$PROD_URL|$REPO_BASE|g\" PKGBUILD
+        sed -i \"s|$PROD_URL|$REPO_BASE|g\" .SRCINFO
 
         makepkg -si --noconfirm
     '
