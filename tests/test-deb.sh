@@ -6,8 +6,11 @@ REPO_URL="${REPO_BASE}/deb/"
 REPO_FILE="/etc/apt/sources.list.d/${PACKAGE_NAME}.list"
 
 docker run --rm debian:buster /bin/bash -c "
-    apt-get update && apt-get install -y ca-certificates;
-    echo 'deb [trusted=yes] $REPO_URL stable main' > $REPO_FILE;
+    apt-get update && apt-get install -y ca-certificates wget gnupg2;
+    wget -qO- https://${REPO_BASE}/gpg-pubkey.asc | gpg --dearmor > ${PACKAGE_NAME}-repo-keyring.gpg
+    cat ${PACKAGE_NAME}-repo-keyring.gpg | tee /etc/apt/keyrings/${PACKAGE_NAME}-repo-keyring.gpg > /dev/null
+
+    echo \"deb [arch=amd64 signed-by=/etc/apt/keyrings/${PACKAGE_NAME}-repo-keyring.gpg] ${REPO_URL} stable main\" |> tee /etc/apt/sources.list.d/${PACKAGE_NAME}.list
     apt-get update && apt-get install -y $PACKAGE_NAME;
 
     if ! command -v $EXECUTABLE_NAME &> /dev/null; then
