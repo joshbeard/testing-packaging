@@ -43,10 +43,6 @@ jobs:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           STAGING_DIR: /mnt/repos
 
-      - run: |
-          ls -l
-          [ -f "install.sh" ] && cat install.sh
-
   create_repos:
     name: Create Package Repos
     runs-on: self-hosted

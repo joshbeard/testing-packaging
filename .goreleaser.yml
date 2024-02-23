@@ -213,9 +213,3 @@ nfpms:
       #  key_file: key.gpg
     archlinux:
       packager: Josh Beard <josh@jbeard.dev>
-
-publishers:
-  - name: generate-install-sh
-    cmd: envsubst < tools/install.tmpl.sh >| install.sh
-    env:
-      - PKG_VERSION={{ .Version }}
