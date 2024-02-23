@@ -60,17 +60,14 @@ jobs:
         env:
           STAGING_DIR: /mnt/repos
 
-      - name: Import GPG Key
+      - name: Create DEB Repository
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-
-      - name: Create DEB Repository
-        run: ./build.sh repo deb
+          ./build.sh repo deb
         env:
           STAGING_DIR: /mnt/repos
           GPG_KEY_ID: ${{ secrets.GPG_FINGERPRINT }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       - name: Create AUR (custom) Repository
         run: ./build.sh in_docker aur-custom

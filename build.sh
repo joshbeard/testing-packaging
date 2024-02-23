@@ -222,6 +222,7 @@ _repo_deb_docker_wrapper() {
     docker run --rm -v ${PWD}:/work -v ${STAGING_DIR}:${STAGING_DIR} \
         -e STAGING_DIR=$STAGING_DIR \
         -e VERSION=$VERSION -e RELEASE=$RELEASE \
+        -e GPG_KEY_ID=$GPG_KEY_ID -e GPG_KEY_PASSPHRASE=$GPG_KEY_PASSPHRASE \
         -w /work -i debian \
         /bin/bash -c "apt update && apt install -y git && /work/build.sh repo deb"
 }
@@ -282,8 +283,10 @@ _repo_deb_gpgsign() {
     echo "=> Signing the Release file with GPG key $GPG_KEY_ID"
     if [ -z "$GPG_KEY_PASSPHRASE" ]; then
         set +x
-        gpg --armor --detach-sign --no-tty --output Release.gpg -u "$GPG_KEY_ID" Release
-        gpg --clearsign --digest-algo SHA256 --no-tty --local-user "$GPG_KEY_ID" --output InRelease Release
+        gpg --list-secret-keys
+        gpg --list-keys
+        gpg --armor --detach-sign --output Release.gpg -u "$GPG_KEY_ID" Release
+        gpg --clearsign --digest-algo SHA256 --local-user "$GPG_KEY_ID" --output InRelease Release
         set -x
     else
         echo "$GPG_KEY_PASSPHRASE" > key_pass.txt
