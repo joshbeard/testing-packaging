@@ -43,9 +43,9 @@ jobs:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           STAGING_DIR: /mnt/repos
 
-      - run: uname -a
-      - run: cat /etc/motd
-      - run: ls -l . dist
+      - run: |
+          ls -l
+          [ -f "install.sh" ] && cat install.sh
 
   create_repos:
     name: Create Package Repos

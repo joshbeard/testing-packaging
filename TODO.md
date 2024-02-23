@@ -44,6 +44,9 @@
 * [~] DEB repository GPG
   * [ ] Verify
 
+* Publish to GitHub with GoReleaser - <https://goreleaser.com/scm/github/>
+* Separate GoReleaser build from publish (wait for tests)
+
 ## Fourth
 
 * [x] Directory indexes
