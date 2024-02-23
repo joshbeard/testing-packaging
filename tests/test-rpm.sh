@@ -6,7 +6,7 @@ REPO_URL="${REPO_BASE}/rpm/\$arch"
 REPO_FILE="/etc/yum.repos.d/${PACKAGE_NAME}.repo"
 
 docker run --rm rockylinux:9 /bin/bash -c "
-    echo -e '[$PACKAGE_NAME]\nname=${PACKAGE_NAME} Repository\nbaseurl=$REPO_URL\nenabled=1\ngpgcheck=0' > $REPO_FILE;
+    echo -e '[$PACKAGE_NAME]\nname=${PACKAGE_NAME} Repository\nbaseurl=$REPO_URL\nenabled=1\ngpgcheck=1\ngpgkey=${REPO_BASE}/gpg-pubkey.asc' > $REPO_FILE;
     dnf install -y $PACKAGE_NAME;
 
     if ! command -v $EXECUTABLE_NAME &> /dev/null; then
