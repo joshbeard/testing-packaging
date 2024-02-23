@@ -13,6 +13,14 @@ but building artifacts more generically (without GoReleaser) instead.
 All of this is an effort to better understand the packaging and distribution of
 software in popular package repositories and formats.
 
+## Overview
+
+* Binary in `.tar.gz` and `.zip` archives for each platform
+* RPM, DEB, AUR, PKGBUILD, APK, Homebrew packages
+* Package repositories with browseable indexes
+* GPG-signed artifacts
+* Repo GPG support
+
 ## Goals
 
 * Monorepo
@@ -60,11 +68,11 @@ software in popular package repositories and formats.
 * [x] Produce an RPM repository on S3
     * [x] Verify
 * [x] Provide a DEB repository on S3
-    * [ ] Verify
+    * [x] Verify
 * [ ] Provide a Homebrew Cask repository
     * [ ] Verify
 * [x] Arch AUR
-    * [ ] Verify
+    * [x] Verify
 * [x] Docker image
     * [x] Publish to Docker Hub
     * [x] Publish to ghcr.io
@@ -72,12 +80,14 @@ software in popular package repositories and formats.
 ### Third
 
 * [~] RPM repository GPG
+  * [ ] Verify
 * [~] DEB repository GPG
+  * [ ] Verify
 
 ### Fourth
 
 * [x] Directory indexes
-  * [ ] TODO: s3/cloudfront default indexes (index.html)
+  * [x] s3/cloudfront default indexes (index.html)
 * [ ] Serve install script for curl/wget by default for root request
 * [ ] Changelogs
 * [ ] Release pipeline/workflow
