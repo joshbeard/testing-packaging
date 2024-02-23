@@ -1,12 +1,12 @@
-name: Build and Package
+name: Release
 
 on:
   push:
     tags:
       - '*.*.*'
 jobs:
-  build_release:
-    name: Build and Deploy Packages
+  build_package:
+    name: Build and Package
     runs-on: self-hosted
     permissions:
       packages: write
@@ -47,6 +47,14 @@ jobs:
       - run: cat /etc/motd
       - run: ls -l . dist
 
+  create_repos:
+    name: Create Package Repos
+    runs-on: self-hosted
+    needs: build_package
+    permissions:
+      packages: write
+      contents: write
+    steps:
       - name: Create RPM Repository
         run: ./build.sh repo rpm
         env:
@@ -63,6 +71,14 @@ jobs:
         env:
           STAGING_DIR: /mnt/repos
 
+  test_repos:
+    name: Test Package Repos
+    runs-on: self-hosted
+    needs: create_repos
+    permissions:
+      packages: write
+      contents: write
+    steps:
       - name: Test package repos
         run: bash tests/run-tests.sh
 
@@ -73,6 +89,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+  index_repos:
+    name: Index Package Repos
+    runs-on: self-hosted
+    permissions:
+      packages: write
+      contents: write
+    needs: test_repos
+    steps:
       - name: S3 Index Generator
         run: |
           docker run --rm \
@@ -91,7 +115,7 @@ jobs:
   docker-hub-doc:
     name: Publish DockerHub Readme
     runs-on: ubuntu-latest
-    needs: build_release
+    needs: test_repos
     steps:
       - uses: actions/checkout@master
       - uses: meeDamian/sync-readme@v1.0.6
