@@ -279,13 +279,20 @@ _repo_deb_gpgsign() {
     fi
 
     cd "${STAGING_DIR}/deb/dists/stable"
+    echo "=> Signing the Release file with GPG key $GPG_KEY_ID"
     if [ -z "$GPG_KEY_PASSPHRASE" ]; then
-        gpg --armor --detach-sign --output Release.gpg -u $GPG_KEY_ID Release
+        echo "GPG_KEY_PASSPHRASE is not set"
+        set +x
+        gpg --armor --detach-sign --output Release.gpg -u "$GPG_KEY_ID" Release
+        set -x
     else
         echo "$GPG_KEY_PASSPHRASE" > key_pass.txt
-        gpg --armor --detach-sign --output Release.gpg -u $GPG_KEY_ID \
+        echo "GPG_KEY_PASSPHRASE is set, using passphrase from key_pass.txt"
+        set +x
+        gpg --armor --detach-sign --output Release.gpg -u "$GPG_KEY_ID" \
             --pinentry-mode loopback --passphrase-file key_pass.txt Release
         rm -f key_pass.txt
+        set -x
     fi
 }
 
