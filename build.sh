@@ -285,16 +285,16 @@ _repo_deb_gpgsign() {
         set +x
         gpg --list-secret-keys
         gpg --list-keys
-        gpg --armor --detach-sign --output Release.gpg -u "$GPG_KEY_ID" Release
-        gpg --clearsign --digest-algo SHA256 --local-user "$GPG_KEY_ID" --output InRelease Release
+        gpg --armor --detach-sign --batch --output Release.gpg -u "$GPG_KEY_ID" Release
+        gpg --clearsign --digest-algo SHA256 --batch --local-user "$GPG_KEY_ID" --output InRelease Release
         set -x
     else
         echo "$GPG_KEY_PASSPHRASE" > key_pass.txt
         echo "A GPG_KEY_PASSPHRASE is set, using passphrase from key_pass.txt"
         set +x
-        gpg --armor --detach-sign --output Release.gpg --no-tty -u "$GPG_KEY_ID" \
+        gpg --armor --detach-sign --output Release.gpg --batch -u "$GPG_KEY_ID" \
             --pinentry-mode loopback --passphrase-file key_pass.txt Release
-        gpg --clearsign --digest-algo SHA256 --no-tty --local-user "$GPG_KEY_ID" \
+        gpg --clearsign --digest-algo SHA256 --batch --local-user "$GPG_KEY_ID" \
             --pinentry-mode loopback --passphrase-file key_pass.txt \
             --output InRelease Release
         rm -f key_pass.txt
