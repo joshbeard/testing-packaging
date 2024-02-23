@@ -18,7 +18,9 @@ S3_BUCKET=jbeard-test-pkgs
 
 GORELEASER_VERSION=v1.23.0
 NFPM_VERSION=v2.35.3
+
 GPG_KEY_ID=${GPG_KEY_ID}
+GPG_KEY_PASSPHRASE=${GPG_KEY_PASSPHRASE}
 
 usage() {
     echo "Usage: $0 <command>"
@@ -277,7 +279,14 @@ _repo_deb_gpgsign() {
     fi
 
     cd "${STAGING_DIR}/deb/dists/stable"
-    gpg -abs -u $GPG_KEY_IDD -o Release.gpg Release
+    if [ -z "$GPG_KEY_PASSPHRASE" ]; then
+        gpg --armor --detach-sign --output Release.gpg -u $GPG_KEY_ID Release
+    else
+        echo "$GPG_KEY_PASSPHRASE" > key_pass.txt
+        gpg --armor --detach-sign --output Release.gpg -u $GPG_KEY_ID \
+            --pinentry-mode loopback --passphrase-file key_pass.txt Release
+        rm -f key_pass.txt
+    fi
 }
 
 # -----------------------------------------------------------------------------

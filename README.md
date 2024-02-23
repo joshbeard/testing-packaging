@@ -80,7 +80,7 @@ software in popular package repositories and formats.
 ### Third
 
 * [~] RPM repository GPG
-  * [ ] Verify
+  * [x] Verify
 * [~] DEB repository GPG
   * [ ] Verify
 
@@ -159,7 +159,8 @@ Add this to `/etc/yum.repos.d/jbeard.repo`:
 name=Hello World
 baseurl=https://get.jbeard.dev/rpm/$basearch
 enabled=1
-gpgcheck=0
+gpgcheck=1
+gpgkey=https://pkgs.home.jbeard.dev/gpg-pubkey.asc
 ```
 
 ```shell

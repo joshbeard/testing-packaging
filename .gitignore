@@ -15,3 +15,4 @@ changelog.yml
 *.gz
 local.auto.tfvars
 key.gpg
+key_pass.txt
