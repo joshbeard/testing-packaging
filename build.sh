@@ -18,6 +18,7 @@ S3_BUCKET=jbeard-test-pkgs
 
 GORELEASER_VERSION=v1.23.0
 NFPM_VERSION=v2.35.3
+GPG_KEY_ID=${GPG_KEY_ID}
 
 usage() {
     echo "Usage: $0 <command>"
@@ -26,7 +27,6 @@ usage() {
     echo "  snapshot         - Create a snapshot release"
     echo "  release          - Create a release"
     echo "  stage            - Stage release artifacts"
-#    echo "  nfpm             - Create packages"
     echo "  repo <type>      - Create a repository for the specified package type"
     echo "  in_docker <type> - Create a repository for the specified package type in a Docker container"
     echo "  docker           - Run a Docker container with the current directory mounted"
@@ -51,7 +51,8 @@ release() {
 stage() {
     echo "=> Staging release artifacts"
     mkdir -p "${STAGING_DIR}/pkg/${VERSION}"
-    mv $DIST_DIR/*.zip $DIST_DIR/*.tar.gz "${STAGING_DIR}/pkg/${VERSION}"/
+    #mv $DIST_DIR/*.zip $DIST_DIR/*.tar.gz "${STAGING_DIR}/pkg/${VERSION}"/
+    mv $DIST_DIR/*.tar.gz "${STAGING_DIR}/pkg/${VERSION}"/
     mv dist/checksums.txt "${STAGING_DIR}/pkg/${VERSION}/checksums.txt"
     mv dist/checksums.txt.sig "${STAGING_DIR}/pkg/${VERSION}/checksums.txt.sig"
     mkdir -p "${STAGING_DIR}/aur"
@@ -257,6 +258,26 @@ _repo_deb() {
 
 	./tools/generate-deb-release.sh "${STAGING_DIR}/deb/dists/stable" > \
         "${STAGING_DIR}/deb/dists/stable/Release"
+
+    echo "=> Signing the Release file"
+    _repo_deb_gpgsign
+}
+
+_repo_deb_gpgsign() {
+    if [ -z "$GPG_KEY_ID" ]; then
+        echo "GPG_KEY_ID is not set"
+        echo "Set the GPG_KEY_ID environment variable to the GPG key ID to use"
+        exit 1
+    fi
+
+    if ! command -v gpg >>/dev/null 2>&1; then
+        echo "gpg not found"
+        echo "gpg is required to sign the Release file"
+        exit 1
+    fi
+
+    gpg --default-key $GPG_KEY_ID --output "${STAGING_DIR}/deb/dists/stable/Release.gpg" \
+        --detach-sig "${STAGING_DIR}/deb/dists/stable/Release"
 }
 
 # -----------------------------------------------------------------------------

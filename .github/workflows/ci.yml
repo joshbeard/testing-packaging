@@ -56,6 +56,7 @@ jobs:
         run: ./build.sh repo deb
         env:
           STAGING_DIR: /mnt/repos
+          GPG_KEY_ID: ${{ secrets.GPG_FINGERPRINT }}
 
       - name: Create AUR (custom) Repository
         run: ./build.sh in_docker aur-custom
