@@ -60,6 +60,12 @@ jobs:
         env:
           STAGING_DIR: /mnt/repos
 
+      - name: Import GPG Key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
       - name: Create DEB Repository
         run: ./build.sh repo deb
         env:
