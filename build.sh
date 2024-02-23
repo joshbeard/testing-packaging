@@ -276,8 +276,8 @@ _repo_deb_gpgsign() {
         exit 1
     fi
 
-    gpg --default-key $GPG_KEY_ID --output "${STAGING_DIR}/deb/dists/stable/Release.gpg" \
-        --detach-sig "${STAGING_DIR}/deb/dists/stable/Release"
+    cd "${STAGING_DIR}/deb/dists/stable"
+    gpg -abs -u $GPG_KEY_IDD -o Release.gpg Release
 }
 
 # -----------------------------------------------------------------------------
