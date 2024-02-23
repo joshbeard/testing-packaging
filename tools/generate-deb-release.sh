@@ -1,7 +1,6 @@
 #!/bin/sh
 set -e
 
-# Change to the directory specified as the first argument
 cd $1
 
 do_hash() {
@@ -10,7 +9,7 @@ do_hash() {
     echo "${HASH_NAME}:"
     for f in $(find -type f); do
         f=$(echo $f | cut -c3-) # remove ./ prefix
-        if [ "$f" = "Release" ]; then
+        if [ "$f" = "Release" ] || [ "$f" = "InRelease" ] || [ "$f" = "Release.gpg" ]; then
             continue
         fi
         echo " $(${HASH_CMD} ${f}  | cut -d" " -f1) $(wc -c $f)"
