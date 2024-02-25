@@ -8,3 +8,4 @@ title: get.jbeard.dev - {relativePath}
 url: https://get.jbeard.dev
 recursive: true
 minify: true
+order: desc
