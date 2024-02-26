@@ -76,11 +76,6 @@ docker_shell() {
 		-w /go/src/github.com/${PACKAGE} golang:1.21 bash
 }
 
-install_tools() {
-	go install github.com/goreleaser/goreleaser@${GORELEASER_VERSION}
-	go install github.com/goreleaser/nfpm/v2/cmd/nfpm@${NFPM_VERSION}
-}
-
 purge_s3() {
     # Confirm
     echo "This will remove all files from the S3 bucket $S3_BUCKET"
@@ -92,6 +87,24 @@ purge_s3() {
     fi
 
     aws s3 rm s3://$S3_BUCKET/ --recursive
+}
+
+# Checks if a command exists and installs it if not.
+ensure_tool() {
+    local tool=$1
+    local install_cmd=$2
+    if ! command -v $tool &>/dev/null; then
+        echo "$tool not found, installing..."
+        eval $install_cmd
+    else
+        echo "$tool is already installed."
+    fi
+}
+
+# Use the generic function for installing tools
+install_tools() {
+    ensure_tool "goreleaser" "go install github.com/goreleaser/goreleaser@${GORELEASER_VERSION}"
+    ensure_tool "nfpm" "go install github.com/goreleaser/nfpm/v2/cmd/nfpm@${NFPM_VERSION}"
 }
 
 # -----------------------------------------------------------------------------
@@ -219,17 +232,24 @@ in_docker() {
     esac
 }
 
+run_in_docker() {
+    local image=$1
+    local commands=$2
+    docker run --rm -v "${PWD}:/work" -v "${STAGING_DIR}:${STAGING_DIR}" \
+        -e STAGING_DIR=$STAGING_DIR \
+        -e VERSION=$VERSION -e RELEASE=$RELEASE \
+        -e GPG_KEY_ID=$GPG_KEY_ID -e GPG_KEY_PASSPHRASE=$GPG_KEY_PASSPHRASE \
+        -w /work -i $image \
+        /bin/bash -c "$commands"
+}
 
 # -----------------------------------------------------------------------------
 # RPM Repository Build
 # -----------------------------------------------------------------------------
 _repo_rpm_docker_wrapper() {
-    docker run --rm -v ${PWD}:/work -v ${STAGING_DIR}:${STAGING_DIR} \
-        -e STAGING_DIR=$STAGING_DIR \
-        -e VERSION=$VERSION -e RELEASE=$RELEASE \
-        -w /work -i rockylinux:9 \
-        /bin/bash -c "dnf install -y git && /work/build.sh repo rpm"
+    run_in_docker "rockylinux:9" "dnf install -y git && /work/build.sh repo rpm"
 }
+
 
 _repo_rpm() {
     if ! command -v createrepo_c >>/dev/null 2>&1; then
@@ -260,13 +280,9 @@ _repo_rpm() {
 # Debian Repository Build
 # -----------------------------------------------------------------------------
 _repo_deb_docker_wrapper() {
-    docker run --rm -v ${PWD}:/work -v ${STAGING_DIR}:${STAGING_DIR} \
-        -e STAGING_DIR=$STAGING_DIR \
-        -e VERSION=$VERSION -e RELEASE=$RELEASE \
-        -e GPG_KEY_ID=$GPG_KEY_ID -e GPG_KEY_PASSPHRASE=$GPG_KEY_PASSPHRASE \
-        -w /work -i debian \
-        /bin/bash -c "apt update && apt install -y git && /work/build.sh repo deb"
+    run_in_docker "debian:latest" "apt update && apt install -y git && /work/build.sh repo deb"
 }
+
 
 _repo_deb() {
     if ! command -v dpkg-scanpackages >>/dev/null 2>&1; then
@@ -391,11 +407,11 @@ _repo_apk_docker_wrapper() {
 _repo_apk() {
     mkdir -p "${STAGING_DIR}/apk/x86_64"
     cp -v "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.apk" \
-        "${STAGING_DIR}/apk/x86_64/${PACKAGE}_${VERSION}_x86_64.apk"
+        "${STAGING_DIR}/apk/x86_64/${PACKAGE}_${VERSION}-${RELEASE}_x86_64.apk"
 
     mkdir -p "${STAGING_DIR}/apk/aarch64"
     cp -v "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.apk" \
-        "${STAGING_DIR}/apk/aarch64/${PACKAGE}_${VERSION}_aarch64.apk"
+        "${STAGING_DIR}/apk/aarch64/${PACKAGE}_${VERSION}-${RELEASE}_aarch64.apk"
 
     # Generate the APK index
     apk index -vU \

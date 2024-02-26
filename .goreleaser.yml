@@ -207,9 +207,8 @@ nfpms:
     deb:
       signature:
         key_file: key.gpg
-    # FIXME: apk signing
-    apk: {}
-      #signature:
-      #  key_file: key.gpg
+    apk:
+      signature:
+        key_file: key.rsa
     archlinux:
       packager: Josh Beard <josh@jbeard.dev>
