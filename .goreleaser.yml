@@ -186,6 +186,7 @@ brews:
     folder: Formula
     goarm: "7"
     homepage: https://github.com/joshbeard/testing-packaging
+    url_template: "https://get.jbeard.dev/pkg/{{ .Tag }}/{{ .ArtifactName }}"
     description: Say Hello World - a test package
     license: MIT
     test: |
