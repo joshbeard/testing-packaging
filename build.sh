@@ -377,9 +377,9 @@ _repo_apk_docker_wrapper() {
     docker run --rm -v ${PWD}:/work \
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w /work \
-        -i alpine:latest \
         -e GPG_KEY_ID=$GPG_KEY_ID -e GPG_KEY_PASSPHRASE=$GPG_KEY_PASSPHRASE \
         -e STAGING_DIR=$STAGING_DIR \
+        -i alpine:latest \
         /bin/ash -c "
             apk update && apk add abuild bash git gpg;
             ./build.sh repo apk;
