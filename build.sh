@@ -378,6 +378,8 @@ _repo_apk_docker_wrapper() {
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w /work \
         -i alpine:latest \
+        -e GPG_KEY_ID=$GPG_KEY_ID -e GPG_KEY_PASSPHRASE=$GPG_KEY_PASSPHRASE \
+        -e STAGING_DIR=$STAGING_DIR \
         /bin/ash -c "
             apk update && apk add abuild bash git gpg;
             ./build.sh repo apk;
@@ -409,6 +411,8 @@ _repo_apk() {
         "${STAGING_DIR}/apk/x86_64/APKINDEX.tar.gz"
     abuild-sign -k /tmp/private.key \
         "${STAGING_DIR}/apk/aarch64/APKINDEX.tar.gz"
+
+    chown -R 1099:1099 "${STAGING_DIR}/apk"
 
     rm -f /tmp/private.key
 }
