@@ -169,6 +169,9 @@ repo() {
         aur-custom-docker)
             _repo_aur_custom_docker
             ;;
+        apk)
+            _repo_apk
+            ;;
         aur-custom)
             _repo_aur_custom
             ;;
@@ -205,6 +208,9 @@ in_docker() {
             ;;
         deb)
             _repo_deb_docker_wrapper
+            ;;
+        apk)
+            _repo_apk_docker_wrapper
             ;;
         *)
             echo "Unknown repository type: $repo_type"
@@ -364,6 +370,42 @@ _repo_aur_custom() {
         "${STAGING_DIR}"/archlinux/x86_64/${PACKAGE}_${VERSION}_x86_64.pkg.tar.zst
 }
 
+# -----------------------------------------------------------------------------
+# APK Repository Build
+# -----------------------------------------------------------------------------
+_repo_apk_docker_wrapper() {
+    docker run --rm -v ${PWD}:/work \
+        -v ${STAGING_DIR}:${STAGING_DIR} \
+        -w ${STAGING_DIR}/apk \
+        -i alpine:latest \
+        /bin/bash -c "
+            apk update && apk install -y gpg abuild;
+            ./build.sh repo apk;
+        "
+}
+
+_repo_apk() {
+    mkdir -p "${STAGING_DIR}/apk/x86_64"
+    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.apk" \
+        "${STAGING_DIR}/apk/x86_64/${PACKAGE}_${VERSION}_x86_64.apk"
+
+    mkdir -p "${STAGING_DIR}/apk/aarch64"
+    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.apk" \
+        "${STAGING_DIR}/apk/aarch64/${PACKAGE}_${VERSION}_aarch64.apk"
+
+    # Generate the APK index
+    apk index -vU \
+        -o "${STAGING_DIR}/apk/x86_64/APKINDEX.tar.gz" \
+        "${STAGING_DIR}/apk/x86_64/*.apk"
+
+    apk index -vU \
+        -o "${STAGING_DIR}/apk/aarch64/APKINDEX.tar.gz" \
+        "${STAGING_DIR}/apk/aarch64/*.apk"
+
+    # Sign the APK index
+    abuild-sign "${STAGING_DIR}/apk/x86_64/APKINDEX.tar.gz"
+    abuild-sign "${STAGING_DIR}/apk/aarch64/APKINDEX.tar.gz"
+}
 
 # Execute the function that matches the first argument
 # e.g. `build.sh clean` runs the `clean` function
@@ -379,3 +421,4 @@ else
     echo "Unknown command: $1"
     exit 1
 fi
+
