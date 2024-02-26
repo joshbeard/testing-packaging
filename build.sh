@@ -382,7 +382,8 @@ _repo_apk_docker_wrapper() {
         -e STAGING_DIR=$STAGING_DIR \
         -i alpine:latest \
         /bin/ash -c "
-            apk update && apk add abuild bash git gpg;
+            apk update && apk add abuild bash git gpg gpg-agent;
+            git config --global --add safe.directory /work;
             ./build.sh repo apk;
         "
     set +x
