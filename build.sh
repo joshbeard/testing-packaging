@@ -391,21 +391,27 @@ _repo_apk_docker_wrapper() {
 
 _repo_apk() {
     mkdir -p "${STAGING_DIR}/apk/x86_64"
-    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.apk" \
+    cp -v "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_amd64.apk" \
         "${STAGING_DIR}/apk/x86_64/${PACKAGE}_${VERSION}_x86_64.apk"
 
     mkdir -p "${STAGING_DIR}/apk/aarch64"
-    cp "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.apk" \
+    cp -v "${DIST_DIR}/${PACKAGE}_${VERSION}_linux_arm64.apk" \
         "${STAGING_DIR}/apk/aarch64/${PACKAGE}_${VERSION}_aarch64.apk"
 
     # Generate the APK index
     apk index -vU \
         -o "${STAGING_DIR}/apk/x86_64/APKINDEX.tar.gz" \
-        "${STAGING_DIR}/apk/x86_64/*.apk"
+        "${STAGING_DIR}"/apk/x86_64/*.apk
 
     apk index -vU \
         -o "${STAGING_DIR}/apk/aarch64/APKINDEX.tar.gz" \
-        "${STAGING_DIR}/apk/aarch64/*.apk"
+        "${STAGING_DIR}"/apk/aarch64/*.apk
+
+    if [ ! -f "/work/key.gpg" ]; then
+        echo "No GPG key found at /work/key.gpg"
+        echo "A GPG key is required to sign the APK index"
+        exit 1
+    fi
 
     # Sign the APK index
     abuild-sign -k /work/key.gpg \
@@ -415,7 +421,7 @@ _repo_apk() {
 
     chown -R 1099:1099 "${STAGING_DIR}/apk"
 
-    rm -f /tmp/private.key
+    rm -f /work/key.gpg
 }
 
 # Execute the function that matches the first argument
