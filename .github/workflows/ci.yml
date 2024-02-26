@@ -164,7 +164,13 @@ jobs:
   index_repos:
     name: Index Package Repos
     runs-on: self-hosted
-    needs: test_repos
+    needs:
+      - test_apk_repo
+      - test_archlinux_pkgbuild
+      - test_archlinux_repo
+      - test_deb_repo
+      - test_install_script
+      - test_rpm_repo
     steps:
       - name: S3 Index Generator
         run: |
@@ -193,7 +199,13 @@ jobs:
   docker-hub-doc:
     name: Publish DockerHub Readme
     runs-on: ubuntu-latest
-    needs: test_repos
+    needs:
+      - test_apk_repo
+      - test_archlinux_pkgbuild
+      - test_archlinux_repo
+      - test_deb_repo
+      - test_install_script
+      - test_rpm_repo
     steps:
       - uses: actions/checkout@master
       - uses: meeDamian/sync-readme@v1.0.6
