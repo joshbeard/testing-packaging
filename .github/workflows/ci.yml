@@ -142,7 +142,7 @@ jobs:
     runs-on: self-hosted
     needs: create_deb_repo
     steps:
-      - run: bash tests/test-deb-aur.sh
+      - run: bash tests/test-deb.sh
 
   test_install_script:
     name: Test Install Script
