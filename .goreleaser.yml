@@ -179,6 +179,18 @@ aurs:
     # Since: v1.23
     #directory: "."
     #
+brews:
+  - repository:
+      owner: joshbeard
+      name: testing-packaging
+    folder: Formula
+    goarm: "7"
+    homepage: https://github.com/joshbeard/testing-packaging
+    description: Say Hello World - a test package
+    license: MIT
+    test: |
+      system "#{bin}/hello-world --version"
+    #extra_install: |-
 
 nfpms:
   - vendor: "Josh Beard"
