@@ -378,11 +378,10 @@ _repo_apk_docker_wrapper() {
     docker run --rm -v ${PWD}:/work \
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w /work \
-        -e GPG_KEY_ID="$GPG_KEY_ID" -e GPG_KEY_PASSPHRASE="$GPG_KEY_PASSPHRASE" \
         -e STAGING_DIR=$STAGING_DIR \
         -i alpine:latest \
         /bin/ash -c "
-            apk update && apk add abuild bash git gpg gpg-agent;
+            apk update && apk add abuild bash git;
             git config --global --add safe.directory /work;
             ./build.sh repo apk;
         "
@@ -407,23 +406,23 @@ _repo_apk() {
         -o "${STAGING_DIR}/apk/aarch64/APKINDEX.tar.gz" \
         "${STAGING_DIR}"/apk/aarch64/*.apk
 
-    if [ ! -f "/work/key.gpg" ]; then
-        echo "No GPG key found at /work/key.gpg"
-        echo "A GPG key is required to sign the APK index"
+    if [ ! -f "/work/alpine.key" ]; then
+        echo "No key found at /work/alpine.key"
+        echo "A key is required to sign the APK index"
         exit 1
     else
-        echo "Found GPG key at /work/key.gpg"
+        echo "Found key at /work/alpine.key"
     fi
 
     # Sign the APK index
-    abuild-sign -k /work/key.gpg \
+    abuild-sign -k /work/alpine.key \
         "${STAGING_DIR}/apk/x86_64/APKINDEX.tar.gz"
-    abuild-sign -k /work/key.gpg \
+    abuild-sign -k /work/alpine.key \
         "${STAGING_DIR}/apk/aarch64/APKINDEX.tar.gz"
 
     chown -R 1099:1099 "${STAGING_DIR}/apk"
 
-    rm -f /work/key.gpg
+    rm -f /work/alpine.key
 }
 
 # Execute the function that matches the first argument
