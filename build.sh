@@ -31,6 +31,7 @@ usage() {
     echo "  stage            - Stage release artifacts"
     echo "  repo <type>      - Create a repository for the specified package type"
     echo "  in_docker <type> - Create a repository for the specified package type in a Docker container"
+    echo "  copy_latest      - Copy the latest versioned release to 'latest'"
     echo "  docker           - Run a Docker container with the current directory mounted"
     echo "  install_tools    - Install goreleaser and nfpm"
     echo
@@ -94,7 +95,43 @@ purge_s3() {
 }
 
 # -----------------------------------------------------------------------------
-# NFPM Package Build
+# Generate install script
+# -----------------------------------------------------------------------------
+copy_latest() {
+    echo "=> Copying latest release to 'latest'"
+    mkdir -p "${STAGING_DIR}/latest"
+
+    for f in $STAGING_DIR/pkg/${VERSION}/*; do
+        new_file=$(basename $f | sed "s/${VERSION}/latest/")
+        cp -f $f ${STAGING_DIR}/latest/$new_file
+
+        # Replace the filename in the checksum file
+        cp -f $STAGING_DIR/pkg/${VERSION}/checksums.txt ${STAGING_DIR}/latest/checksums.txt
+        sed -i "s/${VERSION}/latest/" ${STAGING_DIR}/latest/checksums.txt
+
+        # Generate a new signature for the latest checksum file
+        gpg --list-secret-keys
+        gpg --list-keys
+
+        [ -f "${STAGING_DIR}/latest/checksums.txt.sig" ] && rm -f "${STAGING_DIR}/latest/checksums.txt.sig"
+        if [ -z "$GPG_KEY_PASSPHRASE" ]; then
+            gpg --detach-sign --armor --output ${STAGING_DIR}/latest/checksums.txt.sig \
+                ${STAGING_DIR}/latest/checksums.txt
+        else
+            echo "$GPG_KEY_PASSPHRASE" > key_pass.txt
+            echo "A GPG_KEY_PASSPHRASE is set, using passphrase from key_pass.txt"
+
+            gpg --detach-sign --armor --output ${STAGING_DIR}/latest/checksums.txt.sig \
+                --pinentry-mode loopback --passphrase-file key_pass.txt \
+                ${STAGING_DIR}/latest/checksums.txt
+
+            rm -f key_pass.txt
+        fi
+    done
+}
+
+# -----------------------------------------------------------------------------
+# Package Repositories
 # -----------------------------------------------------------------------------
 _stage_repos() {
     echo "=== Staging RPM packages ============================================"

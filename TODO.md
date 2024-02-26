@@ -54,6 +54,7 @@
 * [ ] Serve install script for curl/wget by default for root request
 * [ ] Changelogs
 * [ ] Release pipeline/workflow
+* [ ] Invalidate CloudFront cache
 * [~] Tests
     * Local web service serving `dist/stage/`
     * Test in Docker container

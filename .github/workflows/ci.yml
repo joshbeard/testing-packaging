@@ -43,6 +43,17 @@ jobs:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           STAGING_DIR: /mnt/repos
 
+  stage_latest_release:
+    name: Stage latest package
+    runs-on: self-hosted
+    needs: build_package
+    steps:
+      - run: ./build.sh copy_latest
+        env:
+          STAGING_DIR: /mnt/repos
+          GPG_KEY_ID: ${{ secrets.GPG_FINGERPRINT }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
   create_repos:
     name: Create Package Repos
     runs-on: self-hosted
