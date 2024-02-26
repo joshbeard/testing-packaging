@@ -376,7 +376,7 @@ _repo_aur_custom() {
 _repo_apk_docker_wrapper() {
     docker run --rm -v ${PWD}:/work \
         -v ${STAGING_DIR}:${STAGING_DIR} \
-        -w ${STAGING_DIR}/apk \
+        -w /work \
         -i alpine:latest \
         /bin/ash -c "
             apk update && apk install -y bash gpg abuild;
