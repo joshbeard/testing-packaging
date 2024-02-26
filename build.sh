@@ -99,31 +99,29 @@ purge_s3() {
 # -----------------------------------------------------------------------------
 copy_latest() {
     echo "=> Copying latest release to 'latest'"
-    mkdir -p "${STAGING_DIR}/latest"
+    mkdir -p "${STAGING_DIR}/pkg/latest"
 
     for f in $STAGING_DIR/pkg/${VERSION}/*; do
         new_file=$(basename $f | sed "s/${VERSION}/latest/")
-        cp -f $f ${STAGING_DIR}/latest/$new_file
+        cp -f $f ${STAGING_DIR}/pkg/latest/$new_file
 
         # Replace the filename in the checksum file
-        cp -f $STAGING_DIR/pkg/${VERSION}/checksums.txt ${STAGING_DIR}/latest/checksums.txt
-        sed -i "s/${VERSION}/latest/" ${STAGING_DIR}/latest/checksums.txt
+        cp -f $STAGING_DIR/pkg/${VERSION}/checksums.txt ${STAGING_DIR}/pkg/latest/checksums.txt
+        sed -i "s/${VERSION}/pkg/latest/" ${STAGING_DIR}/pkg/latest/checksums.txt
 
         # Generate a new signature for the latest checksum file
-        gpg --list-secret-keys
-        gpg --list-keys
-
-        [ -f "${STAGING_DIR}/latest/checksums.txt.sig" ] && rm -f "${STAGING_DIR}/latest/checksums.txt.sig"
+        echo "=> Signing the latest checksum file"
+        [ -f "${STAGING_DIR}/pkg/latest/checksums.txt.sig" ] && rm -f "${STAGING_DIR}/pkg/latest/checksums.txt.sig"
         if [ -z "$GPG_KEY_PASSPHRASE" ]; then
-            gpg --detach-sign --armor --output ${STAGING_DIR}/latest/checksums.txt.sig \
-                ${STAGING_DIR}/latest/checksums.txt
+            gpg --detach-sign --armor --output ${STAGING_DIR}/pkg/latest/checksums.txt.sig \
+                ${STAGING_DIR}/pkg/latest/checksums.txt
         else
             echo "$GPG_KEY_PASSPHRASE" > key_pass.txt
             echo "A GPG_KEY_PASSPHRASE is set, using passphrase from key_pass.txt"
 
-            gpg --detach-sign --armor --output ${STAGING_DIR}/latest/checksums.txt.sig \
+            gpg --detach-sign --armor --output ${STAGING_DIR}/pkg/latest/checksums.txt.sig \
                 --pinentry-mode loopback --passphrase-file key_pass.txt \
-                ${STAGING_DIR}/latest/checksums.txt
+                ${STAGING_DIR}/pkg/latest/checksums.txt
 
             rm -f key_pass.txt
         fi

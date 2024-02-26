@@ -118,7 +118,15 @@ jobs:
             -e AWS_REGION='us-east-1' \
             ghcr.io/joshbeard/web-indexer/web-indexer:latest
 
-      - name: Sync directory to S3
+  publish_repos:
+    name: Publish Package Repos
+    runs-on: self-hosted
+    permissions:
+      packages: write
+      contents: write
+    needs: index_repos
+    steps:
+      - name: Sync to S3
         run: |
           /usr/local/bin/aws s3 sync /mnt/repos s3://jbeard-test-pkgs --delete --region us-east-1
         env:
