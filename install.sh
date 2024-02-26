@@ -32,7 +32,7 @@ DOWNLOAD_URL="${BASE_URL}/${TAR_FILE}"
 CHECKSUM_URL="${BASE_URL}/checksums.txt"
 
 # Download artifact
-echo "Downloading ${TAR_FILE}..."
+echo "Downloading ${DOWNLOAD_URL}..."
 curl -sSLO "${DOWNLOAD_URL}"
 
 # Download checksums
