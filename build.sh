@@ -408,11 +408,9 @@ _repo_apk() {
         "${STAGING_DIR}/apk/aarch64/*.apk"
 
     # Sign the APK index
-    gpg --export-secret-keys --armor $GPG_KEY_ID > /tmp/private.key
-    
-    abuild-sign -k /tmp/private.key \
+    abuild-sign -k /work/key.gpg \
         "${STAGING_DIR}/apk/x86_64/APKINDEX.tar.gz"
-    abuild-sign -k /tmp/private.key \
+    abuild-sign -k /work/key.gpg \
         "${STAGING_DIR}/apk/aarch64/APKINDEX.tar.gz"
 
     chown -R 1099:1099 "${STAGING_DIR}/apk"

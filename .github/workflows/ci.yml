@@ -75,10 +75,11 @@ jobs:
     runs-on: self-hosted
     needs: build_package
     steps:
-      - run: ./build.sh in_docker apk
+      - run:
+          echo "$GPG_PRIVATE_KEY" > key.gpg
+           ./build.sh in_docker apk
         env:
           STAGING_DIR: /mnt/repos
-          GPG_KEY_ID: ${{ secrets.GPG_FINGERPRINT }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
   create_rpm_repo:
