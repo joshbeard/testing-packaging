@@ -15,4 +15,5 @@ changelog.yml
 *.gz
 local.auto.tfvars
 key.gpg
+key.rsa
 key_pass.txt
