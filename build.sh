@@ -374,6 +374,7 @@ _repo_aur_custom() {
 # APK Repository Build
 # -----------------------------------------------------------------------------
 _repo_apk_docker_wrapper() {
+    set -x
     docker run --rm -v ${PWD}:/work \
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w /work \
@@ -384,6 +385,7 @@ _repo_apk_docker_wrapper() {
             apk update && apk add abuild bash git gpg;
             ./build.sh repo apk;
         "
+    set +x
 }
 
 _repo_apk() {
