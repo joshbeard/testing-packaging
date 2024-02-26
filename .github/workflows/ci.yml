@@ -54,6 +54,13 @@ jobs:
           GPG_KEY_ID: ${{ secrets.GPG_FINGERPRINT }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
+  copy_install_script:
+    name: Copy install script
+    runs-on: self-hosted
+    needs: stage_latest_release
+    steps:
+      - run: cp -f install.sh /mnt/repos/install.sh
+
   create_repos:
     name: Create Package Repos
     runs-on: self-hosted
