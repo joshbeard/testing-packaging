@@ -120,3 +120,51 @@ __Update APT sources and Install__
 sudo apt update
 sudo apt install hello-world
 ```
+
+### Arch Linux
+
+#### Arch Linux Repository
+
+Add the package repository:
+
+```shell
+echo -e '\n[hello-world]\nSigLevel = Optional TrustAll\nServer = https://get.jbeard.dev/archlinux/$arch' >> /etc/pacman.conf
+```
+
+Install the package:
+
+```shell
+pacman -Sy hello-world
+```
+
+#### Arch Linux PKGBUILD
+
+The `PKGBUILD` is for installing the binary.
+
+Download the build files:
+
+```shell
+curl -L https://get.jbeard.dev/aur/hello-world-bin.pkgbuild -o PKGBUILD
+curl -L https://get.jbeard.dev/aur/hello-world-bin.srcinfo -o .SRCINFO
+```
+
+Build and install:
+
+```shell
+makepkg -si --noconfirm
+```
+
+### Install Script
+
+```shell
+curl -sfL https://get.jbeard.dev/install.sh | sh -
+```
+
+The install script installs the binary to `~/.local/bin` by default.
+
+Set an `INSTALL_DIR` environment variable to override.
+
+```shell
+curl -sfL https://get.jbeard.dev/install.sh | INSTALL_DIR=/path/to/dir sh -
+```
+

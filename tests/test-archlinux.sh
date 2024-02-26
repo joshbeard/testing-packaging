@@ -6,8 +6,7 @@ REPO_URL="${REPO_BASE}/archlinux/\$arch"
 
 docker run --rm archlinux /bin/bash -c "
     echo -e '\n[$PACKAGE_NAME]\nSigLevel = Optional TrustAll\nServer = $REPO_URL' >> /etc/pacman.conf
-    pacman -Sy --noconfirm
-    pacman -S --noconfirm $PACKAGE_NAME
+    pacman -Sy --noconfirm $PACKAGE_NAME
 
     if ! command -v $EXECUTABLE_NAME &> /dev/null; then
         echo '$EXECUTABLE_NAME could not be installed.' >&2;
