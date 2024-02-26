@@ -411,6 +411,8 @@ _repo_apk() {
         echo "No GPG key found at /work/key.gpg"
         echo "A GPG key is required to sign the APK index"
         exit 1
+    else
+        echo "Found GPG key at /work/key.gpg"
     fi
 
     # Sign the APK index
