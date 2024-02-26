@@ -135,7 +135,7 @@ jobs:
   test_archlinux_pkgbuild:
     name: Test Arch Linux PKGBUILD
     runs-on: self-hosted
-    needs: create_archlinux_repo
+    needs: build_package
     steps:
       - run: bash tests/test-archlinux-aur.sh
 
