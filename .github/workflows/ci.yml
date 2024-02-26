@@ -5,6 +5,9 @@ on:
     tags:
       - '*.*.*'
 jobs:
+# -----------------------------------------------------------------------------
+# Build and Package
+# -----------------------------------------------------------------------------
   build_package:
     name: Build and Package
     runs-on: self-hosted
@@ -43,6 +46,9 @@ jobs:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           STAGING_DIR: /mnt/repos
 
+# -----------------------------------------------------------------------------
+# Stage Repos
+# -----------------------------------------------------------------------------
   stage_latest_release:
     name: Stage latest package
     runs-on: self-hosted
@@ -61,19 +67,33 @@ jobs:
     steps:
       - run: cp -f install.sh /mnt/repos/install.sh
 
-  create_repos:
-    name: Create Package Repos
+# -----------------------------------------------------------------------------
+# Create Repos
+# -----------------------------------------------------------------------------
+  create_apk_repo:
+    name: Create APK Repo
     runs-on: self-hosted
     needs: build_package
-    permissions:
-      packages: write
-      contents: write
+    steps:
+      - run: ./build.sh repo apk
+        env:
+          STAGING_DIR: /mnt/repos
+
+  create_rpm_repo:
+    name: Create RPM Repo
+    runs-on: self-hosted
+    needs: build_package
     steps:
       - name: Create RPM Repository
         run: ./build.sh repo rpm
         env:
           STAGING_DIR: /mnt/repos
 
+  create_deb_repo:
+    name: Create DEB Repo
+    runs-on: self-hosted
+    needs: build_package
+    steps:
       - name: Create DEB Repository
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
@@ -83,35 +103,67 @@ jobs:
           GPG_KEY_ID: ${{ secrets.GPG_FINGERPRINT }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
+  create_archlinux_repo:
+    name: Create Arch Linux Repo
+    runs-on: self-hosted
+    needs: build_package
+    steps:
       - name: Create AUR (custom) Repository
         run: ./build.sh in_docker aur-custom
         env:
           STAGING_DIR: /mnt/repos
 
-  test_repos:
-    name: Test Package Repos
+# -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
+  test_apk_repo:
+    name: Test APK Package and Repo
     runs-on: self-hosted
-    needs: create_repos
-    permissions:
-      packages: write
-      contents: write
+    needs: create_apk_repo
     steps:
-      - name: Test package repos
-        run: bash tests/run-tests.sh
+      - run: bash tests/test-apk.sh
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+  test_archlinux_repo:
+    name: Test Arch Linux Package and Repo
+    runs-on: self-hosted
+    needs: create_archlinux_repo
+    steps:
+      - run: bash tests/test-archlinux.sh
 
+  test_archlinux_pkgbuild:
+    name: Test Arch Linux PKGBUILD
+    runs-on: self-hosted
+    needs: create_archlinux_repo
+    steps:
+      - run: bash tests/test-archlinux-aur.sh
+
+  test_deb_repo:
+    name: Test DEB Package and Repo
+    runs-on: self-hosted
+    needs: create_deb_repo
+    steps:
+      - run: bash tests/test-deb-aur.sh
+
+  test_install_script:
+    name: Test Install Script
+    runs-on: self-hosted
+    needs: copy_install_script
+    steps:
+      - run: bash tests/test-installer.sh
+
+  test_rpm_repo:
+    name: Test RPM Package and Repo
+    runs-on: self-hosted
+    needs: create_rpm_repo
+    steps:
+      - run: bash tests/test-rpm.sh
+
+# -----------------------------------------------------------------------------
+# Publish
+# -----------------------------------------------------------------------------
   index_repos:
     name: Index Package Repos
     runs-on: self-hosted
-    permissions:
-      packages: write
-      contents: write
     needs: test_repos
     steps:
       - name: S3 Index Generator
@@ -128,9 +180,6 @@ jobs:
   publish_repos:
     name: Publish Package Repos
     runs-on: self-hosted
-    permissions:
-      packages: write
-      contents: write
     needs: index_repos
     steps:
       - name: Sync to S3
