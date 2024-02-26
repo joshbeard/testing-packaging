@@ -379,7 +379,7 @@ _repo_apk_docker_wrapper() {
         -w /work \
         -i alpine:latest \
         /bin/ash -c "
-            apk update && apk add bash gpg abuild;
+            apk update && apk add abuild bash git gpg;
             ./build.sh repo apk;
         "
 }
@@ -403,8 +403,14 @@ _repo_apk() {
         "${STAGING_DIR}/apk/aarch64/*.apk"
 
     # Sign the APK index
-    abuild-sign "${STAGING_DIR}/apk/x86_64/APKINDEX.tar.gz"
-    abuild-sign "${STAGING_DIR}/apk/aarch64/APKINDEX.tar.gz"
+    gpg --export-secret-keys --armor $GPG_KEY_ID > /tmp/private.key
+    
+    abuild-sign -k /tmp/private.key \
+        "${STAGING_DIR}/apk/x86_64/APKINDEX.tar.gz"
+    abuild-sign -k /tmp/private.key \
+        "${STAGING_DIR}/apk/aarch64/APKINDEX.tar.gz"
+
+    rm -f /tmp/private.key
 }
 
 # Execute the function that matches the first argument
