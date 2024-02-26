@@ -45,6 +45,7 @@ jobs:
           GPG_FINGERPRINT: ${{ secrets.GPG_FINGERPRINT }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           STAGING_DIR: /mnt/repos
+          BREW_TOKEN: ${{ secrets.HOMEBREW_GITHUB_TOKEN }}
 
 # -----------------------------------------------------------------------------
 # Stage Repos

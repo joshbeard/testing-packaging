@@ -183,6 +183,7 @@ brews:
   - repository:
       owner: joshbeard
       name: homebrew-hello-world
+      token: "{{ .Env.BREW_TOKEN }}"
     folder: Formula
     goarm: "7"
     homepage: https://github.com/joshbeard/testing-packaging
