@@ -379,7 +379,7 @@ _repo_apk_docker_wrapper() {
         -w /work \
         -i alpine:latest \
         /bin/ash -c "
-            apk update && apk install -y bash gpg abuild;
+            apk update && apk add bash gpg abuild;
             ./build.sh repo apk;
         "
 }
