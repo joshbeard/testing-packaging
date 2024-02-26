@@ -1,7 +1,7 @@
 #!/bin/bash
 VERSION="${VERSION:-latest}"
 # Base URL for downloading packages
-BASE_URL="https://get.jbeard.dev/pkg/${VERSION}"
+BASE_URL="${BASE_URL:-https://get.jbeard.dev/pkg/$VERSION}"
 # Target installation directory
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 

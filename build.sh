@@ -107,7 +107,7 @@ copy_latest() {
 
         # Replace the filename in the checksum file
         cp -f $STAGING_DIR/pkg/${VERSION}/checksums.txt ${STAGING_DIR}/pkg/latest/checksums.txt
-        sed -i "s/${VERSION}/pkg/latest/" ${STAGING_DIR}/pkg/latest/checksums.txt
+        sed -i "s/${VERSION}/latest/" ${STAGING_DIR}/pkg/latest/checksums.txt
 
         # Generate a new signature for the latest checksum file
         echo "=> Signing the latest checksum file"
