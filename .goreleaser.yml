@@ -182,7 +182,7 @@ aurs:
 brews:
   - repository:
       owner: joshbeard
-      name: testing-packaging
+      name: homebrew-hello-world
     folder: Formula
     goarm: "7"
     homepage: https://github.com/joshbeard/testing-packaging
