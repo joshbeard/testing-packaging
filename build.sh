@@ -378,7 +378,7 @@ _repo_apk_docker_wrapper() {
     docker run --rm -v ${PWD}:/work \
         -v ${STAGING_DIR}:${STAGING_DIR} \
         -w /work \
-        -e GPG_KEY_ID=$GPG_KEY_ID -e GPG_KEY_PASSPHRASE=$GPG_KEY_PASSPHRASE \
+        -e GPG_KEY_ID="$GPG_KEY_ID" -e GPG_KEY_PASSPHRASE="$GPG_KEY_PASSPHRASE" \
         -e STAGING_DIR=$STAGING_DIR \
         -i alpine:latest \
         /bin/ash -c "
