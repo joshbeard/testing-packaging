@@ -141,6 +141,13 @@ jobs:
     steps:
       - run: bash tests/test-archlinux-aur.sh
 
+  test_brew:
+    name: Test Homebrew Package
+    runs-on: self-hosted
+    needs: build_package
+    steps:
+      - run: bash tests/test-brew.sh
+
   test_deb_repo:
     name: Test DEB Package and Repo
     runs-on: self-hosted

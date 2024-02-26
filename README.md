@@ -154,6 +154,12 @@ Build and install:
 makepkg -si --noconfirm
 ```
 
+### Homebrew
+
+```shell
+brew install joshbeard/hello-world/hello-world
+```
+
 ### Install Script
 
 ```shell
@@ -167,4 +173,3 @@ Set an `INSTALL_DIR` environment variable to override.
 ```shell
 curl -sfL https://get.jbeard.dev/install.sh | INSTALL_DIR=/path/to/dir sh -
 ```
-
