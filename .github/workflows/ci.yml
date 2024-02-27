@@ -144,7 +144,11 @@ jobs:
   test_brew:
     name: Test Homebrew Package
     runs-on: self-hosted
-    needs: build_package
+    # FIXME: Since the Homebrew formula is updated by Goreleaser before the
+    # packages publish, we run this after the publish. Need to test before
+    # *anything* publishes eventually.
+    needs: publish_repos
+    #needs: build_package
     steps:
       - run: bash tests/test-brew.sh
 
